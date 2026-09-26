@@ -269,7 +269,7 @@
     <div class="quick">
       <div class="q" onclick="goPage('turbo', document.querySelectorAll('.tab')[1])"><span class="ms">sports_esports</span><div class="t">Game<br>Turbo</div></div>
       <div class="q" id="qKill" onclick="toggleKill()"><span class="ms">gpp_maybe</span><div class="t">Kill<br>Switch</div></div>
-      <div class="q" id="qAd" onclick="toggleAd()"><span class="ms">block</span><div class="t">Anti<br>Anuncios</div></div>
+      <div class="q" id="qAd" onclick="openAdBlockGuide()"><span class="ms">block</span><div class="t">Anti<br>Anuncios</div></div>
       <div class="q" onclick="openInstall('windows')"><span class="ms">install_desktop</span><div class="t">Instalar<br>App</div></div>
     </div>
     <div class="ver">VPN-Pro v2.2 · Actualización automática activa</div>
@@ -324,7 +324,7 @@
     <div class="feat"><div class="ico"><span class="ms">lock</span></div><div><b>Cifrado AES-256</b><small>Tu tráfico es ilegible para tu proveedor o cualquier espía.</small></div></div>
     <div class="feat"><div class="ico"><span class="ms">history_off</span></div><div><b>Política No-Logs</b><small>No registramos actividad, IP ni historial.</small></div></div>
     <div class="feat"><div class="ico"><span class="ms">gpp_maybe</span></div><div><b>Kill Switch</b><small id="killState">Desactivado — actívalo desde Inicio.</small></div></div>
-    <div class="feat"><div class="ico"><span class="ms">block</span></div><div><b>Bloqueo de anuncios</b><small id="adState">Desactivado — actívalo desde Inicio.</small></div></div>
+    <div class="feat"><div class="ico"><span class="ms">block</span></div><div><b>Bloqueo de anuncios en tus apps</b><small id="adState">Desactivado — tócalo en Inicio para activar el filtro del teléfono.</small></div></div>
     <div class="feat"><div class="ico"><span class="ms">visibility_off</span></div><div><b>Navegación anónima</b><small>Tu IP real queda oculta tras la del servidor.</small></div></div>
     <div class="feat"><div class="ico"><span class="ms">wifi</span></div><div><b>WiFi público seguro</b><small>Cifra todo en redes abiertas contra ataques.</small></div></div>
   </div>
@@ -582,10 +582,49 @@ function checkKill(){
 /* ANTI-ANUNCIOS REAL: interceptor que bloquea peticiones a dominios de anuncios conocidos */
 const AD_DOMAINS=['doubleclick.net','googlesyndication.com','googleadservices.com','google-analytics.com','googletagmanager.com/ads','facebook.net','facebook.com/tr','adservice.google.com','adnxs.com','adsystem.com','criteo.com','taboola.com','outbrain.com','scorecardresearch.com','ads.yahoo.com','adcolony.com','applovin.com','unityads.unity3d.com','chartboost.com','vungle.com','ironsrc.com','mopub.com'];
 let blockedCount=parseInt(localStorage.getItem('vpnpro_blocked')||'0');
-function toggleAd(){ adOn=!adOn; localStorage.setItem('vpnpro_ad',adOn?'1':'0'); $('qAd').classList.toggle('on',adOn);
-  $('adState').textContent=adOn?'✅ ACTIVO — '+blockedCount+' peticiones de anuncios bloqueadas hasta ahora.':'Desactivado — actívalo desde Inicio.';
-  toast(adOn?'Anti-anuncios activado':'Anti-anuncios desactivado');
-  notif('Anti-Anuncios',adOn?'Bloqueador activo':'Desactivado'); }
+/* ANTI-ANUNCIOS PARA LAS APPS DEL TELÉFONO (no para el VPN en sí):
+   activa el filtro DNS privado de AdGuard a nivel de sistema — bloquea banners
+   en juegos, apps y webs del teléfono entero */
+function openAdBlockGuide(){
+  const d=detectDevice();
+  const ua=navigator.userAgent;
+  const isAndroid=/Android/i.test(ua);
+  const isIOS=/iPhone|iPad/i.test(ua);
+  let html='';
+  if(isAndroid){
+    html=`
+      <b style="color:var(--green)">📱 Bloquear anuncios en TODAS tus apps (Android)</b><br>
+      <span style="font-size:12.5px; color:var(--txt2)">Activa el filtro DNS de AdGuard — el teléfono entero queda sin la mayoría de anuncios (juegos, apps, webs). Toca abajo para copiar la dirección:</span>
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:12px; margin-top:10px; text-align:center; font-family:monospace; font-size:15px; color:var(--green);">dns.adguard-dns.com</div>
+      <button class="p-btn" onclick="copyDNS()"><span class="ms">content_copy</span>Copiar dirección</button>
+      <b style="display:block; margin-top:14px;">Pasos en tu teléfono:</b>
+      <div style="font-size:12.5px; line-height:2; color:var(--txt)">
+      1. Abre <b>Ajustes</b> del teléfono 🔧<br>
+      2. Busca <b>"DNS privado"</b> arriba (lupa 🔍)<br>
+      3. Elige <b>"Nombre de host del proveedor"</b><br>
+      4. Pega la dirección copiada<br>
+      5. Guardar ✅ — reinicia las apps y quedan sin anuncios</div>
+      <div style="font-size:11.5px; color:var(--txt2); margin-top:8px;">⚠️ Bloquea la mayoría de banners de apps/juegos. YouTube app muestra algunos (los manda junto al video) — es la única excepción conocida.</div>`;
+  } else if(isIOS){
+    html=`
+      <b style="color:var(--green)">📱 Bloquear anuncios en tu iPhone</b><br>
+      <span style="font-size:12.5px; color:var(--txt2)">En iPhone se activa descargando el perfil DNS de AdGuard (gratis, de la App Store):</span>
+      <button class="p-btn" onclick="window.open('https://apps.apple.com/app/adguard/id1047223162','_blank')"><span class="ms">download</span>Abrir AdGuard en App Store</button>
+      <div style="font-size:12.5px; line-height:2; margin-top:10px; color:var(--txt)">1. Instala AdGuard (gratis)<br>2. Ábrelo y activa la protección DNS<br>3. Tu iPhone queda filtrado contra anuncios</div>`;
+  } else {
+    html=`
+      <b style="color:var(--green)">💻 Bloquear anuncios en tu PC</b><br>
+      <span style="font-size:12.5px; color:var(--txt2)">La extensión uBlock Origin (gratuita y la más efectiva del mundo) bloquea anuncios en todas las webs:</span>
+      <button class="p-btn" onclick="window.open('https://ublockorigin.com/','_blank')"><span class="ms">download</span>Obtener uBlock Origin</button>
+      <div style="font-size:11.5px; color:var(--txt2); margin-top:8px;">Instálala en Chrome/Edge → todos los navegadores quedan sin anuncios.</div>`;
+  }
+  html+=`<div style="background:rgba(79,140,255,.08); border:1px solid var(--blue); border-radius:12px; padding:10px; margin-top:12px; font-size:11.5px; color:var(--txt2);">💡 También usamos este filtro <b style="color:var(--txt)">dentro de VPN-Pro</b>: ${blockedCount} anuncios bloqueados en la app hasta ahora.</div>`;
+  $('adState').innerHTML=html;
+  goPage('prot', document.querySelectorAll('.tab')[2]);
+  notif('Anti-Anuncios','Guía de bloqueo para tus apps lista');
+}
+function copyDNS(){ navigator.clipboard?.writeText('dns.adguard-dns.com').then(()=>toast('📋 Dirección copiada — pégala en DNS privado')).catch(()=>toast('Escribe: dns.adguard-dns.com')); }
+function toggleAd(){ openAdBlockGuide(); }
 // Interceptor real de fetch: si anti-ads está ON, las peticiones a dominios de anuncios fallan al instante
 const origFetch=window.fetch;
 window.fetch=function(...args){
