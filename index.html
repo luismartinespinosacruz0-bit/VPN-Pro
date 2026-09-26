@@ -203,13 +203,13 @@ function pwaInstall(){
       <h3>Premium</h3>
       <div class="price">$2.99<small>/mes</small></div>
       <ul><li>+40 países</li><li>5 dispositivos</li><li>Velocidad máxima 10 Gbps</li><li>Modo Gamer + Streaming</li><li>Kill Switch incluido</li></ul>
-      <a class="btn btn-main" href="#descargar">Obtener Premium</a>
+      <a class="btn btn-main" onclick="openPay('Premium', 2.99)">Pagar con PayPal</a>
     </div>
     <div class="plan">
       <h3>Lifetime</h3>
       <div class="price">$39<small>único pago</small></div>
       <ul><li>Todo lo de Premium</li><li>Para siempre</li><li>Soporte prioritario 24/7</li><li>Nuevas funciones primero</li></ul>
-      <a class="btn btn-ghost" href="#descargar">Comprar</a>
+      <a class="btn btn-ghost" onclick="openPay('Lifetime', 39)">Comprar con PayPal</a>
     </div>
   </div>
 </section>
@@ -220,6 +220,64 @@ function pwaInstall(){
 </footer>
 
 <div id="installBar">📲 Instala VPN-Pro en tu dispositivo <button onclick="installPWA()">Instalar</button></div>
+
+<!-- MODAL DE PAGO PAYPAL -->
+<div id="payModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,10,.88); z-index:600; align-items:center; justify-content:center; padding:20px;">
+  <div style="background:#111a3a; border:2px solid #f5c518; border-radius:22px; max-width:480px; width:100%; padding:34px 28px; text-align:center; max-height:90vh; overflow-y:auto;">
+    <div style="font-size:52px">💳</div>
+    <h3 id="pay-title" style="font-size:24px; margin:10px 0 4px;">Plan Premium</h3>
+    <div id="pay-price" style="font-size:42px; font-weight:800; color:#f5c518; margin:8px 0 18px;">$2.99<small style="font-size:15px; color:#8492b8; font-weight:400;">/mes</small></div>
+    <div style="text-align:left; background:#0d1533; border:1px solid #22305c; border-radius:14px; padding:18px; font-size:14px; color:#cdd7ee; line-height:1.8; margin-bottom:22px;">
+      <div>✓ Pago 100% seguro con PayPal</div>
+      <div>✓ Activación inmediata de tu plan</div>
+      <div>✓ Garantía de devolución 30 días</div>
+      <div>✓ Recibes tu licencia al correo</div>
+    </div>
+    <div id="paypal-button-container"></div>
+    <button onclick="closePay()" style="margin-top:18px; background:none; border:1px solid #3a4a75; color:#8492b8; padding:10px 26px; border-radius:30px; cursor:pointer;">Cancelar</button>
+  </div>
+</div>
+
+<script>
+const PAYPAL_EMAIL = 'infiernocheats@gmail.com';
+let payPlan = null;
+function openPay(plan, price){
+  payPlan = {plan, price};
+  document.getElementById('pay-title').textContent = 'Plan ' + plan;
+  document.getElementById('pay-price').innerHTML = '$' + price + (plan==='Premium' ? '<small style="font-size:15px; color:#8492b8; font-weight:400;">/mes</small>' : '<small style="font-size:15px; color:#8492b8; font-weight:400;"> pago único</small>');
+  const m = document.getElementById('payModal');
+  m.style.display='flex';
+  renderPayPal();
+}
+function closePay(){ document.getElementById('payModal').style.display='none'; }
+function renderPayPal(){
+  const c = document.getElementById('paypal-button-container');
+  c.innerHTML = '';
+  if(!window.paypal){
+    const s = document.createElement('script');
+    s.src = 'https://www.paypal.com/sdk/js?client-id=SB_CLIENT_ID&currency=USD';
+    s.onload = () => drawButtons();
+    s.onerror = () => { c.innerHTML = fallbackLink(); };
+    document.body.appendChild(s);
+  } else { drawButtons(); }
+}
+function fallbackLink(){
+  return '<a href="https://www.paypal.com/paypalme/" target="_blank" style="display:block; background:#f5c518; color:#0a1128; font-weight:800; padding:15px; border-radius:12px; text-decoration:none;">💳 Pagar con PayPal</a><p style="color:#8492b8; font-size:12.5px; margin-top:10px;">O envía $'+payPlan.price+' USD a: <b style="color:#fff">'+PAYPAL_EMAIL+'</b> y te enviamos tu licencia.</p>';
+}
+function drawButtons(){
+  paypal.Buttons({
+    createOrder: function(data, actions){
+      return actions.order.create({ purchase_units: [{ description:'VPN-Pro Plan '+payPlan.plan, amount:{ value: String(payPlan.price) } }] });
+    },
+    onApprove: function(data, actions){
+      return actions.order.capture().then(function(details){
+        alert('✅ ¡Pago completado!\nGracias ' + (details.payer.name.given_name||'') + '.\n\nTu licencia VPN-Pro ' + payPlan.plan + ' llegará al correo de tu cuenta PayPal en unos minutos.');
+        closePay();
+      });
+    }
+  }).render('#paypal-button-container');
+}
+</script>
 
 <script>
 let deferred;
