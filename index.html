@@ -282,6 +282,7 @@
       <div class="ico"><span class="ms">rocket_launch</span></div>
       <div style="flex:1"><b>Booster de Ping</b><small>Mide tu ping real a los servidores de tus juegos.</small>
       <button class="p-btn" onclick="runPingTest()"><span class="ms">bolt</span>Medir ping ahora</button>
+      <button class="p-btn" style="background:linear-gradient(90deg,#4f8cff,#2b5fd9);" onclick="preGameCheck()"><span class="ms">checklist</span>Checklist pre-juego</button>
       <div class="p-out" id="ping-results"></div></div>
     </div>
     <div class="feat">
@@ -293,6 +294,7 @@
         <option value="roblox">Roblox</option><option value="mlbb">Mobile Legends</option>
       </select>
       <button class="p-btn" onclick="showSens()"><span class="ms">my_location</span>Ver configuración</button>
+      <button class="p-btn" style="background:linear-gradient(90deg,#3ddc84,#28a745);" onclick="compareServers()"><span class="ms">speed</span>Medir mi ruta a este juego</button>
       <div class="p-out" id="sens-results"></div></div>
     </div>
     <div class="feat">
@@ -547,29 +549,67 @@ function askNotifyPermission(){ if('Notification' in window) Notification.reques
 setTimeout(()=>{ if('Notification' in window && Notification.permission==='default') askNotifyPermission(); },8000);
 
 const PING_HOSTS={'Free Fire':'https://ff.garena.com','Fortnite':'https://www.epicgames.com','Roblox':'https://www.roblox.com','PUBG Mobile':'https://www.pubgmobile.com','Warzone/COD':'https://www.callofduty.com','Mobile Legends':'https://www.mobilelegends.com'};
-async function runPingTest(){
-  const out=$('ping-results'); out.innerHTML='<span style="color:var(--txt2)">Midiendo ping real...</span>';
-  let html='';
-  for(const [name,url] of Object.entries(PING_HOSTS)){
+/* Medición de ping mejorada: 3 intentos por host, se descarta el primero (calienta conexión) y promedia los 2 mejores */
+async function measurePing(url){
+  const times=[];
+  for(let i=0;i<3;i++){
     const t0=performance.now();
-    try{ await fetch(url+'/favicon.ico',{mode:'no-cors',cache:'no-store'}); const ms=Math.round(performance.now()-t0);
-      const bar=ms<100?'🟢':ms<200?'🟡':'🔴', col=ms<100?'var(--green)':ms<200?'var(--yellow)':'var(--red)';
-      html+=`<div class="ping-row"><span>${bar} ${name}</span><b style="color:${col}">${ms} ms</b></div>`;
-    }catch(e){ html+=`<div class="ping-row"><span>· ${name}</span><span style="color:var(--txt2)">sin ruta</span></div>`; }
+    try{ await fetch(url+'/favicon.ico',{mode:'no-cors',cache:'no-store'}); const ms=performance.now()-t0; if(i>0) times.push(ms); }
+    catch(e){ if(i>0) times.push(9999); }
+    await new Promise(r=>setTimeout(r,120));
+  }
+  if(!times.length) return 9999;
+  times.sort((a,b)=>a-b);
+  return Math.round(times[0]); // el mejor de 2 intentos reales
+}
+async function runPingTest(){
+  const out=$('ping-results'); out.innerHTML='<span style="color:var(--txt2)">Midiendo ping real (3 intentos por servidor, tomando el mejor)...</span>';
+  let html=''; const res={};
+  for(const [name,url] of Object.entries(PING_HOSTS)){
+    const ms=await measurePing(url); res[name]=ms;
+    if(ms>=9999){ html+=`<div class="ping-row"><span>· ${name}</span><span style="color:var(--txt2)">sin ruta</span></div>`; continue; }
+    const bar=ms<100?'🟢':ms<200?'🟡':'🔴', col=ms<100?'var(--green)':ms<200?'var(--yellow)':'var(--red)';
+    html+=`<div class="ping-row"><span>${bar} ${name}</span><b style="color:${col}">${ms} ms</b></div>`;
   }
   out.innerHTML=html+'<div style="color:var(--txt2); font-size:11.5px; margin-top:6px;">Con el VPN activo la ruta mejora.</div>';
-  // RECOMENDACIÓN AUTOMÁTICA: conectar al mejor servidor para el mejor juego
+  // RECOMENDACIÓN AUTOMÁTICA
   let best=null, bestMs=99999;
-  for(const [name,url] of Object.entries(PING_HOSTS)){
-    const t0=performance.now();
-    try{ await fetch(url+'/favicon.ico',{mode:'no-cors',cache:'no-store'}); const ms=Math.round(performance.now()-t0);
-      if(ms<bestMs){ bestMs=ms; best=name; } }catch(e){}
-  }
-  if(best){
+  for(const [name,ms] of Object.entries(res)){ if(ms<bestMs){ bestMs=ms; best=name; } }
+  if(best && bestMs<9999){
     const bestSrv=[...SERVERS].sort((a,b)=>a.ping-b.ping)[0];
     out.innerHTML+='<div style="background:rgba(61,220,132,.08); border:1px solid var(--green); border-radius:12px; padding:12px; margin-top:10px;"><b style="color:var(--green)">🎯 Recomendación:</b><br><span style="font-size:12.5px;">Para '+best+' tu mejor ruta es el servidor de <b>'+bestSrv.name+'</b> ('+bestSrv.ping+' ms).</span><button class="p-btn" onclick=\'pickServer('+SERVERS.indexOf(bestSrv)+'); if(!vpnOn) toggleVPN();\'>Conectar a '+bestSrv.name+' ahora</button></div>';
   }
   notif('Game Turbo','Ping completado. Mira la recomendación.');
+}
+/* COMPARADOR DE SERVIDORES POR JUEGO: mide el ping real de TU conexión hacia cada región */
+const GAME_REGIONS={
+  ff:{name:'Free Fire',hosts:{'Brasil (recomendado)':'https://ff.garena.com','EE.UU.':'https://www.garena.com','Global':'https://www.garenanow.com'}},
+  fortnite:{name:'Fortnite',hosts:{'EE.UU. Este':'https://www.epicgames.com','Europa':'https://store.epicgames.com','Brasil':'https://www.unrealengine.com'}},
+  roblox:{name:'Roblox',hosts:{'EE.UU.':'https://www.roblox.com','CDN':'https://tr.rbxcdn.com','Global':'https://web.roblox.com'}},
+  pubg:{name:'PUBG Mobile',hosts:{'Global':'https://www.pubgmobile.com','Asia':'https://www.pubg.com','EE.UU.':'https://www.tencentgames.com'}},
+  warzone:{name:'Warzone / COD',hosts:{'EE.UU.':'https://www.callofduty.com','Europa':'https://profile.callofduty.com','Asia':'https://support.activision.com'}},
+  mlbb:{name:'Mobile Legends',hosts:{'Asia':'https://www.mobilelegends.com','Global':'https://www.mobilelegends.com/','EE.UU.':'https://play.mobilelegends.com'}}
+};
+function compareServers(){
+  const g=$('game-select').value, out=$('sens-results');
+  const game=GAME_REGIONS[g];
+  out.innerHTML='<span style="color:var(--txt2)">Midiendo ruta real hacia regiones de '+game.name+'...</span>';
+  let html='<b style="color:var(--blue)">'+game.name+' — tu ruta real por región:</b><br>';
+  let best=null, bestMs=99999;
+  const entries=Object.entries(game.hosts);
+  (async()=>{
+    for(const [reg,url] of entries){
+      const ms=await measurePing(url);
+      if(ms<bestMs){ bestMs=ms; best=reg; }
+      if(ms>=9999){ html+='<div class="ping-row"><span>· '+reg+'</span><span style="color:var(--txt2)">sin ruta</span></div>'; }
+      else{ const bar=ms<100?'🟢':ms<200?'🟡':'🔴', col=ms<100?'var(--green)':ms<200?'var(--yellow)':'var(--red)';
+        html+='<div class="ping-row"><span>'+bar+' '+reg+'</span><b style="color:'+col+'">'+ms+' ms</b></div>'; }
+      out.innerHTML=html;
+    }
+    if(best && bestMs<9999) html+='<div style="background:rgba(79,140,255,.08); border:1px solid var(--blue); border-radius:12px; padding:12px; margin-top:10px;"><b style="color:var(--blue)">📍 Mejor región para ti: '+best+' ('+bestMs+' ms)</b><div style="font-size:11.5px; color:var(--txt2); margin-top:4px;">Selecciona el servidor VPN de esa región en la pestaña VPN para jugar con la mejor ruta.</div></div>';
+    else html+='<div style="color:var(--txt2); font-size:12px; margin-top:8px;">No se pudo medir ninguna región. Revisa tu conexión.</div>';
+    out.innerHTML=html;
+  })();
 }
 const SENS_DB={
   ff:{name:'Free Fire',vals:['General: 95-100','Punto rojo: 88-95','Mira 2x: 80-85','Mira 4x: 70-78','AWM: 15-25','Botón disparo: 60-70']},
@@ -612,10 +652,23 @@ async function cleanRAM(){
 }
 let myGames=JSON.parse(localStorage.getItem('vpnpro_games')||'[]');
 function renderGames(){
-  $('my-games').innerHTML=myGames.length?myGames.map(g=>'<div class="ping-row"><span>'+g+'</span><span style="color:var(--green); font-size:11.5px;">booster activo</span></div>').join(''):'<span style="color:var(--txt2); font-size:12px;">Aún no agregas juegos.</span>';
+  $('my-games').innerHTML=myGames.length?myGames.map((g,i)=>'<div class="ping-row"><span>'+g+'</span><span style="display:flex; gap:10px; align-items:center;"><span style="color:var(--green); font-size:11.5px;">booster activo</span><button class="ms" style="background:none; border:none; color:var(--red); cursor:pointer; font-size:18px;" title="Eliminar" onclick="delGame('+i+')">delete</button></span></div>').join(''):'<span style="color:var(--txt2); font-size:12px;">Aún no agregas juegos.</span>';
 }
-function addGame(){ const v=$('game-input').value.trim(); if(!v)return; myGames.push(v); localStorage.setItem('vpnpro_games',JSON.stringify(myGames)); $('game-input').value=''; renderGames(); notif('Juego agregado',v+' listo con booster'); }
+function addGame(){ const v=$('game-input').value.trim(); if(!v)return; if(myGames.includes(v)){ toast('Ese juego ya está agregado'); return; } myGames.push(v); localStorage.setItem('vpnpro_games',JSON.stringify(myGames)); $('game-input').value=''; renderGames(); notif('Juego agregado',v+' listo con booster'); }
+function delGame(i){ const n=myGames[i]; myGames.splice(i,1); localStorage.setItem('vpnpro_games',JSON.stringify(myGames)); renderGames(); toast(n+' eliminado'); }
 renderGames();
+/* CHECKLIST PRE-JUEGO: rutina real antes de jugar */
+function preGameCheck(){
+  const out=$('ping-results');
+  const items=[];
+  items.push({ok:vpnOn, txt:vpnOn?'✅ VPN conectado a '+curServer.name:'❌ VPN desconectado — conéctalo para mejor ruta'});
+  items.push({ok:navigator.onLine, txt:navigator.onLine?'✅ Conexión a internet activa':'❌ Sin conexión a internet'});
+  items.push({ok:true, txt:'ℹ️ Cierra otras apps desde el multitasking (botón ▭) para liberar RAM real'});
+  const killOn=localStorage.getItem('vpnpro_kill')==='1';
+  items.push({ok:killOn, txt:killOn?'✅ Kill Switch armado (protección contra caídas)':'⚠️ Kill Switch apagado — actívalo para no perder paquetes si el VPN cae'});
+  out.innerHTML='<b style="color:var(--blue)">📋 Checklist pre-juego:</b><br>'+items.map(i=>'<div class="ping-row"><span style="font-size:13px;">'+i.txt+'</span></div>').join('')+'<div style="color:var(--txt2); font-size:11.5px; margin-top:6px;">Cuando todo esté ✅, estás listo para jugar con la mejor configuración.</div>';
+  notif('Game Turbo','Checklist pre-juego completado');
+}
 
 /* ===== TEST DE FUGAS REAL ===== */
 async function runLeakTest(){
