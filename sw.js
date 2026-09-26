@@ -1,4 +1,4 @@
-const CACHE = 'vpnpro-v23';
+const CACHE = 'vpnpro-v24';
 const ASSETS = ['./manifest.json','./icon-192.png','./icon-512.png'];
 
 self.addEventListener('install', e => {
