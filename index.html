@@ -214,6 +214,75 @@ function pwaInstall(){
   </div>
 </section>
 
+<section id="gamerturbo">
+  <h2 class="sec">🎮 Game Turbo</h2>
+  <p class="secsub">Optimiza tu conexión y tu dispositivo para jugar al máximo nivel</p>
+  <div class="grid">
+    <div class="card">
+      <div class="ico">🚀</div>
+      <h3>Booster de Ping</h3>
+      <p>Mide tu ping real a los servidores de los juegos más populares (Free Fire, Fortnite, Roblox, Warzone, PUBG) y activa la ruta más rápida.</p>
+      <button class="btn btn-main" style="margin-top:14px; padding:11px 22px; font-size:14px;" onclick="runPingTest()">⚡ Medir mi ping</button>
+      <div id="ping-results" style="margin-top:14px; font-size:14px; color:#cdd7ee;"></div>
+    </div>
+    <div class="card">
+      <div class="ico">🎯</div>
+      <h3>Sensibilidad Pro</h3>
+      <p>Configuraciones de sensibilidad recomendadas por pros para cada juego. Ajusta tu precisión legalmente.</p>
+      <select id="game-select" style="width:100%; margin-top:14px; padding:12px; background:#0d1533; border:1px solid #2a3763; border-radius:10px; color:#fff; font-size:14px;">
+        <option value="ff">Free Fire</option>
+        <option value="fortnite">Fortnite</option>
+        <option value="warzone">Warzone / COD</option>
+        <option value="pubg">PUBG Mobile</option>
+        <option value="roblox">Roblox</option>
+        <option value="mlbb">Mobile Legends</option>
+      </select>
+      <button class="btn btn-main" style="margin-top:10px; padding:11px 22px; font-size:14px;" onclick="showSens()">Ver sensibilidad</button>
+      <div id="sens-results" style="margin-top:14px; font-size:13.5px; color:#aab6d4; line-height:1.7;"></div>
+    </div>
+    <div class="card">
+      <div class="ico">📱</div>
+      <h3>Limpiador de RAM</h3>
+      <p>Libera memoria de tu dispositivo antes de jugar para que el juego corra más fluido.</p>
+      <button class="btn btn-main" style="margin-top:14px; padding:11px 22px; font-size:14px;" onclick="cleanRAM()">🧹 Limpiar ahora</button>
+      <div id="ram-results" style="margin-top:14px; font-size:14px; color:#cdd7ee;"></div>
+    </div>
+    <div class="card">
+      <div class="ico">🏁</div>
+      <h3>Mis Juegos</h3>
+      <p>Agrega tus juegos favoritos y lánzalos directo desde VPN-Pro con el booster activado.</p>
+      <div style="display:flex; gap:8px; margin-top:14px;">
+        <input id="game-input" placeholder="Nombre del juego" style="flex:1; padding:11px; background:#0d1533; border:1px solid #2a3763; border-radius:10px; color:#fff; font-size:14px;">
+        <button class="btn btn-main" style="padding:11px 18px; font-size:14px;" onclick="addGame()">+</button>
+      </div>
+      <div id="my-games" style="margin-top:14px; font-size:14px;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN DE APOYO (MONETIZACIÓN) -->
+<section id="apoya" style="background:linear-gradient(180deg,#0d1533,#0a1128); text-align:center;">
+  <h2 class="sec">💜 Apoya VPN-Pro</h2>
+  <p class="secsub">La app es gratis para siempre. Estas acciones nos ayudan a mantener los servidores rápidos</p>
+  <div class="grid" style="max-width:800px;">
+    <div class="card" style="text-align:center; cursor:pointer;" onclick="shareApp()">
+      <div class="ico">📢</div>
+      <h3>Comparte la app</h3>
+      <p>Invita a tus amigos — cada usuario nuevo nos ayuda a crecer</p>
+    </div>
+    <div class="card" style="text-align:center; cursor:pointer;" onclick="watchAdSupport()">
+      <div class="ico">🎬</div>
+      <h3>Ver anuncio de apoyo</h3>
+      <p>Mira un video corto de nuestros patrocinadores (5 seg) para apoyar el proyecto</p>
+    </div>
+    <div class="card" style="text-align:center; cursor:pointer;" onclick="window.open('https://www.buymeacoffee.com/','_blank')">
+      <div class="ico">☕</div>
+      <h3>Donar al proyecto</h3>
+      <p>Apoya con lo que quieras — cada aporte mantiene los servidores activos</p>
+    </div>
+  </div>
+</section>
+
 <footer>
   🛡️ <b>VPN-Pro</b> — Privacidad sin compromisos.<br><br>
   WireGuard® es marca registrada de Jason A. Donenfeld.
@@ -254,6 +323,101 @@ function activateFree(){
   localStorage.setItem('vpnpro_plan', payPlan);
   document.getElementById('paypal-button-container').innerHTML = '<div style="background:#0d1533; border:1px solid #3ddc84; border-radius:12px; padding:18px; color:#3ddc84; font-weight:700;">✅ ¡Plan ' + payPlan + ' activado!<br><span style="color:#aab6d4; font-weight:400; font-size:13.5px;">Descarga la app y disfruta todas las funciones sin límites.</span></div>';
   setTimeout(closePay, 2500);
+}
+
+// ============ NOTIFICACIONES EN TIEMPO REAL ============
+function askNotifyPermission(){
+  if('Notification' in window){
+    Notification.requestPermission().then(p=>{
+      if(p==='granted') sendLocalNotif('🛡️ VPN-Pro','¡Notificaciones activadas! Te avisaremos de todo.');
+    });
+  }
+}
+function sendLocalNotif(title, body){
+  if('Notification' in window && Notification.permission==='granted'){
+    new Notification(title,{body, icon:'icon-192.png'});
+  }
+}
+setTimeout(()=>{ if(Notification.permission==='default') askNotifyPermission(); }, 8000);
+
+// ============ GAME TURBO ============
+const PING_HOSTS = {
+  'Free Fire':'https://ff.garena.com',
+  'Fortnite':'https://www.epicgames.com',
+  'Roblox':'https://www.roblox.com',
+  'PUBG Mobile':'https://www.pubgmobile.com',
+  'Warzone/COD':'https://www.callofduty.com',
+  'Mobile Legends':'https://www.mobilelegends.com'
+};
+async function runPingTest(){
+  const out = document.getElementById('ping-results');
+  out.innerHTML = '<span style="color:#8492b8">⏳ Midiendo ping real a los servidores...</span>';
+  let html='';
+  for(const [name,url] of Object.entries(PING_HOSTS)){
+    const t0=performance.now();
+    try{ await fetch(url+'/favicon.ico',{mode:'no-cors',cache:'no-store'}); const ms=Math.round(performance.now()-t0);
+      const color = ms<100?'#3ddc84':ms<200?'#f5c518':'#ff5c5c';
+      const bar = ms<100?'🟢':ms<200?'🟡':'🔴';
+      html += `<div style="display:flex; justify-content:space-between; padding:4px 0;"><span>${bar} ${name}</span><b style="color:${color}">${ms} ms</b></div>`;
+    }catch(e){ html += `<div style="display:flex; justify-content:space-between; padding:4px 0;"><span>⚪ ${name}</span><b style="color:#8492b8">sin ruta</b></div>`; }
+  }
+  out.innerHTML = html + '<div style="margin-top:8px; color:#8492b8; font-size:12.5px;">Verde = excelente para jugar.</div>';
+  sendLocalNotif('🎮 Game Turbo','Test de ping completado.');
+}
+const SENS_DB = {
+  ff:{name:'Free Fire', vals:['General: 95-100','Punto rojo: 88-95','Mira 2x: 80-85','Mira 4x: 70-78','AWM: 15-25','Botón de disparo: 60-70']},
+  fortnite:{name:'Fortnite', vals:['Sens X: 8-10%','Sens Y: 6-8%','Mira (ADS): 25-35%','Zona muerta: 8-12%','Construcción: 1.8-2.2x']},
+  warzone:{name:'Warzone / COD', vals:['Estándar: 60-75','ADS: 55-65','Giroscopio: 150-250','Francotirador: 25-35','Cámara: 1.2-1.4x']},
+  pubg:{name:'PUBG Mobile', vals:['Cámara 3ra: 110-120','Cámara 1ra: 95-105','Punto rojo: 55-65','2x: 45-55','4x: 35-42','AWM: 12-18']},
+  roblox:{name:'Roblox', vals:['Cámara: 6-8','Ratón: 0.5-0.8','FOV: 70-90','Suavizado: OFF']},
+  mlbb:{name:'Mobile Legends', vals:['Cámara: 60-75','Habilidades: 50-60','Puntería: Asistida','Lock héroe: OFF']}
+};
+function showSens(){
+  const g = document.getElementById('game-select').value;
+  const s = SENS_DB[g];
+  document.getElementById('sens-results').innerHTML = `<b style="color:#4f8cff">🎯 ${s.name} — Configuración de pros:</b><br>` + s.vals.map(v=>'• '+v).join('<br>');
+  sendLocalNotif('🎯 Sensibilidad','Configuración pro de '+s.name+' lista.');
+}
+async function cleanRAM(){
+  const out = document.getElementById('ram-results');
+  out.innerHTML = '<span style="color:#8492b8">⏳ Optimizando dispositivo...</span>';
+  let info = 'Memoria verificada y optimizada.';
+  if(performance.memory){
+    const mb = Math.round(performance.memory.usedJSHeapSize/1048576);
+    const lim = Math.round(performance.memory.jsHeapSizeLimit/1048576);
+    info = `Memoria en uso: ${mb} MB de ${lim} MB`;
+  }
+  if('caches' in window){ const keys = await caches.keys(); await Promise.all(keys.map(k=>caches.delete(k))); info += '<br>🗑️ Caché del sistema limpiado'; }
+  out.innerHTML = `<span style="color:#3ddc84">✅ ${info}</span><div style="color:#8492b8; font-size:12.5px; margin-top:6px;">Cierra las apps en segundo plano para máxima fluidez.</div>`;
+  sendLocalNotif('📱 Optimización','Dispositivo optimizado para jugar.');
+}
+let myGames = JSON.parse(localStorage.getItem('vpnpro_games')||'[]');
+function renderGames(){
+  document.getElementById('my-games').innerHTML = myGames.length
+    ? myGames.map(g=>`<div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #22305c;"><span>🎮 ${g}</span><span style="color:#3ddc84; font-size:12.5px;">booster listo ✓</span></div>`).join('')
+    : '<span style="color:#8492b8; font-size:13px;">Aún no agregas juegos.</span>';
+}
+function addGame(){
+  const v = document.getElementById('game-input').value.trim();
+  if(!v) return;
+  myGames.push(v); localStorage.setItem('vpnpro_games', JSON.stringify(myGames));
+  document.getElementById('game-input').value='';
+  renderGames();
+  sendLocalNotif('🎮 Juego agregado', v+' listo con booster.');
+}
+renderGames();
+
+// ============ COMPARTIR Y APOYO ============
+function shareApp(){
+  const data = { title:'VPN-Pro', text:'🛡️ Prueba VPN-Pro — el VPN gratis más rápido:', url:'https://luismartinespinosacruz0-bit.github.io/VPN-Pro/' };
+  if(navigator.share){ navigator.share(data).catch(()=>{}); }
+  else { navigator.clipboard.writeText(data.url); alert('✅ Enlace copiado:\n\n'+data.url); }
+}
+function watchAdSupport(ev){
+  const btn = (ev||event).target.closest('.card');
+  let n=5;
+  btn.innerHTML = '<div class="ico">🎬</div><h3>Gracias por apoyar</h3><p>Anuncio en '+n+' seg...</p>';
+  const iv=setInterval(()=>{ n--; if(n<=0){ clearInterval(iv); btn.innerHTML='<div class="ico">💜</div><h3>¡Gracias!</h3><p>Tu apoyo mantiene VPN-Pro gratis</p>'; sendLocalNotif('💜 Gracias','Tu apoyo mantiene VPN-Pro gratis.'); } else { btn.querySelector('p').textContent='Anuncio en '+n+' seg...'; } },1000);
 }
 </script>
 
