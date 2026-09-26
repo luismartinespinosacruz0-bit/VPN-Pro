@@ -372,7 +372,7 @@ function detectDevice(){
   return {type:'android', name:'Dispositivo móvil', ico:'android'};
 }
 (function initGate(){
-  const app=$('realApp'), gate=$('webGate');
+  const app=document.getElementById('realApp'), gate=document.getElementById('webGate');
   if(isStandalone()){
     // Está instalada: mostrar app completa
     gate.style.display='none'; app.style.display='block';
