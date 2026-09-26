@@ -736,7 +736,7 @@ function injectAdsterraBanner(){
     const cfg=document.createElement('script');
     cfg.textContent="atOptions = {'key':'b0da0298d6a6232b042670e95a138aee','format':'iframe','height':50,'width':320,'params':{}};";
     const inv=document.createElement('script');
-    inv.src='https://www.highrevenueformat.com/b0da0298d6a6232b042670e95a138aee/invoke.js';
+    inv.src='https://pl31514433.profitableratecpmnetwork.com/64/49/7e/64497e274da05090faed030c73b483ab.js';
     inv.async=true;
     box.appendChild(cfg); box.appendChild(inv);
   }catch(e){}
@@ -760,14 +760,13 @@ function showPopAd(){
     <div style="font-size:12px;color:#8fa3d9;text-align:center;margin:12px 0 18px">Se cierra en <b id=\"popCnt\" style=\"color:#4d8dff\">5</b>s</div>
     <button id=\"popClose\" disabled style=\"background:none;border:1px solid #33406e;color:#5d6b9d;padding:10px 26px;border-radius:12px;font-size:13px;cursor:not-allowed\">Espera 5s…</button>`;
   document.body.appendChild(ov);
-  // Inyectar anuncio real de Adsterra 300x250 dentro del popup
+  // Inyectar anuncio real de Adsterra dentro del popup
   try{
-    const cfg=document.createElement('script');
-    cfg.textContent="atOptions = {'key':'b0da0298d6a6232b042670e95a138aee','format':'iframe','height':250,'width':300,'params':{}};";
+    ov.querySelector('#popAdBox').innerHTML='';
     const inv=document.createElement('script');
-    inv.src='https://www.highrevenueformat.com/b0da0298d6a6232b042670e95a138aee/invoke.js';
+    inv.src='https://pl31514433.profitableratecpmnetwork.com/64/49/7e/64497e274da05090faed030c73b483ab.js';
     inv.async=true;
-    ov.querySelector('#popAdBox').appendChild(cfg); ov.querySelector('#popAdBox').appendChild(inv);
+    ov.querySelector('#popAdBox').appendChild(inv);
   }catch(e){}
   let c=5; const cnt=ov.querySelector('#popCnt'), btn=ov.querySelector('#popClose');
   const iv=setInterval(()=>{ c--; cnt.textContent=c; btn.textContent='Espera '+c+'s…';
@@ -807,12 +806,11 @@ function openSupport(){
   document.body.appendChild(ov);
   // Anuncio real de Adsterra renderizado dentro de la app
   try{
-    const cfg=document.createElement('script');
-    cfg.textContent="atOptions = {'key':'b0da0298d6a6232b042670e95a138aee','format':'iframe','height':250,'width':300,'params':{}};";
+    ov.querySelector('#supAdBox').innerHTML='';
     const inv=document.createElement('script');
-    inv.src='https://www.highrevenueformat.com/b0da0298d6a6232b042670e95a138aee/invoke.js';
+    inv.src='https://pl31514433.profitableratecpmnetwork.com/64/49/7e/64497e274da05090faed030c73b483ab.js';
     inv.async=true;
-    ov.querySelector('#supAdBox').appendChild(cfg); ov.querySelector('#supAdBox').appendChild(inv);
+    ov.querySelector('#supAdBox').appendChild(inv);
   }catch(e){}
   let c=5; const cnt=ov.querySelector('#supCnt'), btn=ov.querySelector('#supClose');
   const iv=setInterval(()=>{ c--; cnt.textContent=c; btn.textContent='Espera '+c+'s…';
