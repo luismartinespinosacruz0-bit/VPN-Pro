@@ -1,5 +1,5 @@
-const CACHE = 'vpnpro-v11';
-const ASSETS = ['./index.html','./manifest.json','./icon-192.png','./icon-512.png'];
+const CACHE = 'vpnpro-v12';
+const ASSETS = ['./manifest.json','./icon-192.png','./icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
@@ -13,11 +13,21 @@ self.addEventListener('activate', e => {
       .then(clients => clients.forEach(c => c.postMessage({type:'UPDATED'})))
   );
 });
-// Auto-actualización: al instalar una versión nueva, se activa sola sin esperar
+// Red-primero: la página y el sw SIEMPRE vienen de la red (así las actualizaciones llegan al instante)
 self.addEventListener('fetch', e => {
+  const url = new URL(e.request.url);
+  if (e.request.mode === 'navigate' || url.pathname.endsWith('index.html') || url.pathname.endsWith('sw.js')) {
+    e.respondWith(fetch(e.request).then(res => {
+      const copy = res.clone();
+      caches.open(CACHE).then(c => c.put(e.request, copy));
+      return res;
+    }).catch(() => caches.match(e.request).then(r => r || caches.match('./index.html'))));
+    return;
+  }
+  // Otros recursos: caché primero (iconos, manifest)
   e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).then(res => {
     const copy = res.clone();
     caches.open(CACHE).then(c => c.put(e.request, copy));
     return res;
-  }).catch(() => caches.match('./index.html'))));
+  })));
 });
