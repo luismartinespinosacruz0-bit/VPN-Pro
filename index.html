@@ -849,19 +849,24 @@ setInterval(()=>{
 }, 45000);
 // ====== ANUNCIOS QUE APARECEN DE REPENTE (como apps gratis) ======
 // Popup de anuncio: pantalla completa tipo intersticial con cuenta regresiva
+/* ANUNCIO VISIBLE DENTRO DE LA APP (como las apps gratis):
+   tarjeta con el anuncio de Adsterra y botón ✕ para cerrarla y seguir usando la VPN */
 function showPopAd(){
   const app=document.querySelector('.app');
   if(!app || app.style.display==='none') return; // solo en la app instalada
-  if(sessionStorage.getItem('vpnpro_adshown')) return; // 1 por sesión
+  if(document.getElementById('inAppAd')) return; // no duplicar
   const ov=document.createElement('div');
-  ov.style.cssText='position:fixed;inset:0;background:rgba(2,6,20,.96);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;';
+  ov.id='inAppAd';
+  ov.style.cssText='position:fixed;inset:0;background:rgba(2,6,20,.92);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;';
   ov.innerHTML=`
-    <div style="font-size:12px;color:#8fa3d9;letter-spacing:1px;margin-bottom:10px">ADVERTISEMENT</div>
-    <div id="popAdBox" style="width:300px; height:250px; background:#0a1128; border:1px solid #33406e; border-radius:12px; overflow:hidden; display:flex; align-items:center; justify-content:center;"></div>
-    <div style="font-size:12px;color:#8fa3d9;text-align:center;margin:12px 0 18px">Se cierra en <b id=\"popCnt\" style=\"color:#4d8dff\">5</b>s</div>
-    <button id=\"popClose\" disabled style=\"background:none;border:1px solid #33406e;color:#5d6b9d;padding:10px 26px;border-radius:12px;font-size:13px;cursor:not-allowed\">Espera 5s…</button>`;
+    <div style="width:320px; background:#0d1636; border:1px solid #33406e; border-radius:18px; padding:16px; position:relative;">
+      <button id=\"adX\" title=\"Cerrar anuncio\" style=\"position:absolute; top:-12px; right:-12px; width:34px; height:34px; border-radius:50%; background:#1d2a5c; border:2px solid #4d8dff; color:#fff; font-size:16px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:2;\">✕</button>
+      <div style=\"font-size:10.5px; color:#8fa3d9; letter-spacing:1px; margin-bottom:8px; text-align:center;\">ADVERTISEMENT</div>
+      <div id=\"popAdBox\" style=\"width:300px; height:250px; background:#0a1128; border-radius:12px; overflow:hidden; display:flex; align-items:center; justify-content:center; margin:0 auto;\"></div>
+      <div style=\"font-size:11px; color:#8fa3d9; text-align:center; margin-top:10px;\">💜 Este anuncio mantiene VPN-Pro gratis</div>
+    </div>`;
   document.body.appendChild(ov);
-  // Inyectar anuncio real de Adsterra dentro del popup
+  // Anuncio real de Adsterra dentro de la tarjeta
   try{
     ov.querySelector('#popAdBox').innerHTML='';
     const inv=document.createElement('script');
@@ -869,25 +874,22 @@ function showPopAd(){
     inv.async=true;
     ov.querySelector('#popAdBox').appendChild(inv);
   }catch(e){}
-  let c=5; const cnt=ov.querySelector('#popCnt'), btn=ov.querySelector('#popClose');
-  const iv=setInterval(()=>{ c--; cnt.textContent=c; btn.textContent='Espera '+c+'s…';
-    if(c<=0){ clearInterval(iv); btn.disabled=false; btn.style.cursor='pointer'; btn.style.borderColor='#4d8dff'; btn.style.color='#4d8dff'; btn.textContent='✕ Cerrar anuncio'; btn.onclick=()=>ov.remove(); } },1000);
+  // La ✕ cierra al instante y el usuario sigue usando la VPN
+  ov.querySelector('#adX').onclick=()=>{ ov.remove(); notif('💜 Gracias','Tu vista del anuncio apoya VPN-Pro'); };
+  // Clic fuera de la tarjeta también cierra
+  ov.addEventListener('click',e=>{ if(e.target===ov) ov.remove(); });
 }
-// Se dispara: al abrir la app (5 seg) y aleatoriamente al cambiar de pestaña (15% probabilidad, máx 1 cada 4 min)
-setTimeout(showPopAd,5000);
-let lastPop=Date.now();
+// Se muestra: al abrir la app (6 seg) y cada vez que el usuario cambie de pestaña (máx 1 cada 3 min)
+setTimeout(showPopAd,6000);
+let lastPop=Date.now()-120000; // la primera por tab-change puede salir a los 60s
 function maybePopAd(){
   const app=document.querySelector('.app');
   if(!app || app.style.display==='none') return;
-  if(Date.now()-lastPop<240000) return;
-  if(Math.random()<0.15){ lastPop=Date.now(); showPopAdForce(); }
-}
-function showPopAdForce(){
-  sessionStorage.removeItem('vpnpro_adshown');
-  const old=document.getElementById('popAdOv'); if(old) old.remove();
+  if(document.getElementById('inAppAd')) return;
+  if(Date.now()-lastPop<180000) return;
+  lastPop=Date.now();
   showPopAd();
 }
-// Al cambiar de pestaña en la app
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>setTimeout(maybePopAd,600)));
 // Anuncio intersticial: se abre cada 3 desconexiones de VPN (como las apps VPN reales)
 let discCount=parseInt(localStorage.getItem('vpnpro_discs')||'0');
@@ -900,10 +902,12 @@ function openSupport(){
   const ov=document.createElement('div');
   ov.style.cssText='position:fixed;inset:0;background:rgba(2,6,20,.96);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;';
   ov.innerHTML=`
-    <div style="font-size:12px;color:#8fa3d9;letter-spacing:1px;margin-bottom:10px">SPONSORED</div>
-    <div id="supAdBox" style="width:300px; height:250px; background:#0a1128; border:1px solid #33406e; border-radius:12px; overflow:hidden; display:flex; align-items:center; justify-content:center;"></div>
-    <div style="font-size:12px;color:#8fa3d9;text-align:center;margin:12px 0 18px">Mira el anuncio de nuestro patrocinador — se cierra en <b id=\"supCnt\" style=\"color:#4d8dff\">5</b>s</div>
-    <button id=\"supClose\" disabled style=\"background:none;border:1px solid #33406e;color:#5d6b9d;padding:10px 26px;border-radius:12px;font-size:13px;cursor:not-allowed\">Espera 5s…</button>`;
+    <div style="width:320px; background:#0d1636; border:1px solid #33406e; border-radius:18px; padding:16px; position:relative;">
+      <button id=\"supX\" title=\"Cerrar\" style=\"position:absolute; top:-12px; right:-12px; width:34px; height:34px; border-radius:50%; background:#1d2a5c; border:2px solid #4d8dff; color:#fff; font-size:16px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:2;\">✕</button>
+      <div style=\"font-size:10.5px; color:#8fa3d9; letter-spacing:1px; margin-bottom:8px; text-align:center;\">SPONSORED</div>
+      <div id=\"supAdBox\" style=\"width:300px; height:250px; background:#0a1128; border-radius:12px; overflow:hidden; display:flex; align-items:center; justify-content:center; margin:0 auto;\"></div>
+      <div style=\"font-size:11px; color:#8fa3d9; text-align:center; margin-top:10px;\">💜 Gracias por apoyar VPN-Pro</div>
+    </div>`;
   document.body.appendChild(ov);
   // Anuncio real de Adsterra renderizado dentro de la app
   try{
@@ -913,9 +917,8 @@ function openSupport(){
     inv.async=true;
     ov.querySelector('#supAdBox').appendChild(inv);
   }catch(e){}
-  let c=5; const cnt=ov.querySelector('#supCnt'), btn=ov.querySelector('#supClose');
-  const iv=setInterval(()=>{ c--; cnt.textContent=c; btn.textContent='Espera '+c+'s…';
-    if(c<=0){ clearInterval(iv); btn.disabled=false; btn.style.cursor='pointer'; btn.style.borderColor='#4d8dff'; btn.style.color='#4d8dff'; btn.textContent='✕ Cerrar'; btn.onclick=()=>ov.remove(); } },1000);
+  ov.querySelector('#supX').onclick=()=>ov.remove();
+  ov.addEventListener('click',e=>{ if(e.target===ov) ov.remove(); });
   notif('💜 ¡Gracias!','Tu apoyo ayuda a mantener VPN-Pro gratis');
 }
 
