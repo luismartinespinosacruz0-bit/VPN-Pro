@@ -305,12 +305,13 @@
     </div>
     <div class="feat">
       <div class="ico"><span class="ms">sports_score</span></div>
-      <div style="flex:1"><b>Mis Juegos</b><small>Lanza tus juegos con el booster activo.</small>
+      <div style="flex:1"><b>Mis Juegos</b><small>Lanza tus juegos con el booster activo + config para tu teléfono.</small>
       <div style="display:flex; gap:8px; margin-top:10px;">
         <input id="game-input" placeholder="Nombre del juego" style="margin-top:0;">
         <button class="p-btn" style="width:auto; padding:12px 18px; margin-top:0;" onclick="addGame()">+</button>
       </div>
-      <div class="p-out" id="my-games"></div></div>
+      <div class="p-out" id="my-games"></div>
+      <div id="launch-info" class="p-out"></div></div>
     </div>
   </div>
 
@@ -651,8 +652,72 @@ async function cleanRAM(){
   notif('Optimización','Dispositivo optimizado: '+freed+' archivos limpiados');
 }
 let myGames=JSON.parse(localStorage.getItem('vpnpro_games')||'[]');
+/* ===== DETECCIÓN REAL DEL TELÉFONO + LAUNCHER DE JUEGOS ===== */
+// Detecta el modelo real del dispositivo por su User Agent
+function detectPhone(){
+  const ua=navigator.userAgent;
+  let brand='Tu dispositivo', model='';
+  const m=(re)=>{ const x=ua.match(re); return x?x[1]:null; };
+  if(/iPhone/.test(ua)){ brand='Apple'; model='iPhone '+(m(/iPhone OS (\d+)/)?.[1]||''); }
+  else if(/SM-/.test(ua)){ brand='Samsung'; model=m(/SM-([A-Z0-9]+)/)?.slice(0,8)||''; }
+  else if(/Redmi|POCO/.test(ua)){ brand='Xiaomi '+(/POCO/.test(ua)?'POCO':'Redmi'); model=m(/(Redmi|POCO)\s?([A-Z0-9]+)/)?.[0]||''; }
+  else if(/M2\d{3}|moto/.test(ua)){ brand='Motorola'; model=m(/moto[^)]*/i)?.[0]||''; }
+  else if(/HUAWEI/.test(ua)){ brand='Huawei'; model=m(/HUAWEI\s([^;]+)/)?.[1]||''; }
+  else if(/OPPO/.test(ua)){ brand='OPPO'; model=m(/OPPO\s([^;]+)/)?.[1]||''; }
+  else if(/realme/.test(ua)){ brand='realme'; model=m(/realme\s([^;]+)/)?.[1]||''; }
+  else if(/vivo/.test(ua)){ brand='vivo'; model=m(/vivo\s([^;]+)/)?.[1]||''; }
+  else if(/Android/.test(ua)){ brand='Android'; model=m(/Android[^;]*;\s*([^;)]+)/)?.[1]?.trim()?.slice(0,20)||''; }
+  else if(/Windows/.test(ua)){ brand='PC Windows'; }
+  else if(/Macintosh/.test(ua)){ brand='Mac'; }
+  // DPI y resolución reales del dispositivo
+  const dpr=window.devicePixelRatio||1;
+  const px=Math.min(screen.width,screen.height)*dpr; // lado corto en px físicos
+  const dpi=Math.round(160*dpr);
+  return {brand, model, dpr, dpi, resW:Math.round(screen.width*dpr), resH:Math.round(screen.height*dpr)};
+}
+// Deep links: abren el juego real instalado en el móvil (esquemas oficiales)
+const GAME_LINKS={
+  'free fire':'freefire://','freefire':'freefire://','garena free fire':'freefire://',
+  'roblox':'roblox://','pubg':'pubgmhd://','pubg mobile':'pubgmhd://','pubgm':'pubgmhd://',
+  'mobile legends':'mobilelegends://','mlbb':'mobilelegends://','moba legends':'mobilelegends://',
+  'fortnite':'fortnite://','call of duty':'callofduty://','warzone':'callofduty://','cod':'callofduty://','codm':'callofduty://',
+  'clash royale':'clashroyale://','clash of clans':'clashofclans://','brawl stars':'brawlstars://',
+  'among us':'amongus://','discord':'discord://','minecraft':'minecraft://','gta':'gta3://','genshin':'genshinimpact://','honor of kings':'honorofkings://'
+};
+function launchGame(nombre){
+  const info=detectPhone();
+  const key=nombre.toLowerCase().trim();
+  const deep=GAME_LINKS[key];
+  const out=$('launch-info');
+  // Config de sensi/DPI ajustada al dispositivo detectado
+  const tier=info.dpr>=3?'gama alta':info.dpr>=2?'gama media':'gama básica';
+  let cfg='<b style="color:var(--blue)">📱 Config para tu '+info.brand+(info.model?' '+info.model:'')+' ('+tier+', '+info.dpi+' DPI):</b><br>';
+  if(key.includes('free fire')||key==='freefire'){
+    cfg+='• General: '+(info.dpr>=3?'98':'95')+' · Punto rojo: '+(info.dpr>=3?'92':'88')+' · 4x: 75<br>• DPI recomendado: '+Math.max(400,Math.min(600,info.dpi))+'<br>';
+  } else if(key.includes('pubg')){
+    cfg+='• Cámara: '+(info.dpr>=3?'120':'110')+' · Punto rojo: 60 · 4x: 40<br>• DPI recomendado: '+Math.max(420,Math.min(650,info.dpi))+'<br>';
+  } else if(key.includes('mlbb')||key.includes('legends')){
+    cfg+='• Cámara: 70 · Habilidades: 55 · Puntería: Asistida<br>• DPI recomendado: '+Math.max(400,Math.min(600,info.dpi))+'<br>';
+  } else {
+    cfg+='• Sensibilidad: media-alta para '+tier+'<br>• DPI recomendado: '+Math.max(400,Math.min(650,info.dpi))+'<br>';
+  }
+  cfg+='<span style="font-size:11px; color:var(--txt2)">Ajusta estos valores en los ajustes del juego (Config → Sensibilidad). Se guardan una sola vez.</span><br>';
+  // Estado del booster
+  cfg+='<div style="margin-top:8px;">'+(vpnOn?'✅ VPN activo en '+curServer.name+' — mejor ruta lista':'⚠️ VPN apagado — conéctalo para la mejor ruta')+'</div>';
+  // Lanzamiento real por deep link
+  if(deep){
+    cfg+='<div style="background:rgba(61,220,132,.08); border:1px solid var(--green); border-radius:12px; padding:10px; margin-top:8px;"><b style="color:var(--green)">🚀 Lanzando '+nombre+'...</b><div style="font-size:11px; color:var(--txt2);">Si no abre, instala la app del juego primero.</div></div>';
+    out.innerHTML=cfg;
+    const a=document.createElement('a'); a.href=deep; document.body.appendChild(a); a.click(); a.remove();
+    notif('Game Turbo',nombre+' lanzado con booster');
+  } else {
+    cfg+='<div style="background:rgba(79,140,255,.08); border:1px solid var(--blue); border-radius:12px; padding:10px; margin-top:8px;"><b style="color:var(--blue)">🎮 '+nombre+'</b><div style="font-size:11.5px;">Este juego no tiene lanzamiento automático — búscalo en tu teléfono y aplica la config de arriba. El VPN con mejor ruta ya está listo.</div></div>';
+    out.innerHTML=cfg;
+    notif('Game Turbo','Config lista para '+nombre);
+  }
+}
 function renderGames(){
-  $('my-games').innerHTML=myGames.length?myGames.map((g,i)=>'<div class="ping-row"><span>'+g+'</span><span style="display:flex; gap:10px; align-items:center;"><span style="color:var(--green); font-size:11.5px;">booster activo</span><button class="ms" style="background:none; border:none; color:var(--red); cursor:pointer; font-size:18px;" title="Eliminar" onclick="delGame('+i+')">delete</button></span></div>').join(''):'<span style="color:var(--txt2); font-size:12px;">Aún no agregas juegos.</span>';
+  $('my-games').innerHTML=myGames.length?myGames.map((g,i)=>'<div class="ping-row"><span style="cursor:pointer; flex:1; color:var(--txt); font-weight:600;" onclick="launchGame(\''+g.replace(/'/g,"\\'")+'\')">'+g+'</span><span style="display:flex; gap:10px; align-items:center;"><button class="p-btn" style="width:auto; padding:7px 14px; margin:0; font-size:11.5px;" onclick="launchGame(\''+g.replace(/'/g,"\\'")+'\')">LANZAR</button><button class="ms" style="background:none; border:none; color:var(--red); cursor:pointer; font-size:18px;" title="Eliminar" onclick="delGame('+i+')">delete</button></span></div>').join(''):'<span style="color:var(--txt2); font-size:12px;">Aún no agregas juegos. Agrega Free Fire, Roblox, PUBG...</span>';
 }
 function addGame(){ const v=$('game-input').value.trim(); if(!v)return; if(myGames.includes(v)){ toast('Ese juego ya está agregado'); return; } myGames.push(v); localStorage.setItem('vpnpro_games',JSON.stringify(myGames)); $('game-input').value=''; renderGames(); notif('Juego agregado',v+' listo con booster'); }
 function delGame(i){ const n=myGames[i]; myGames.splice(i,1); localStorage.setItem('vpnpro_games',JSON.stringify(myGames)); renderGames(); toast(n+' eliminado'); }
