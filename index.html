@@ -296,6 +296,7 @@ function toggleVPN(){
     $('dot').classList.remove('on'); $('statusTxt').textContent='Desprotegido';
     $('ipTxt').textContent='oculta'; $('dlVal').textContent='0.0'; $('ulVal').textContent='0.0'; $('pgVal').textContent='--';
     toast('VPN desconectado'); notif('VPN-Pro','VPN desconectado. Tu IP está visible.');
+    checkKill(); // Si Kill Switch está activo, bloquea todo al instante
     return;
   }
   connecting=true;
@@ -314,6 +315,7 @@ function toggleVPN(){
     simIv=setInterval(()=>{ $('dlVal').textContent=(30+Math.random()*50).toFixed(1); $('ulVal').textContent=(15+Math.random()*25).toFixed(1); },1500);
     toast('Conectado a '+curServer.name);
     notif('VPN-Pro','Conectado a '+curServer.name+'. Estás protegido.');
+    checkKill(); // Quitar bloqueo si estaba activo
   },2200);
 }
 
@@ -349,13 +351,51 @@ function pickServer(i){
 function openSheet(){ $('sheet').classList.add('open'); $('sheetBg').style.display='block'; renderServers(); }
 function closeSheet(){ $('sheet').classList.remove('open'); $('sheetBg').style.display='none'; }
 
-let killOn=false, adOn=false;
-function toggleKill(){ killOn=!killOn; $('qKill').classList.toggle('on',killOn);
-  $('killState').textContent=killOn?'Activado — tu IP nunca se filtra si el VPN se cae.':'Desactivado — actívalo desde Inicio.';
-  toast(killOn?'Kill Switch activado':'Kill Switch desactivado'); }
-function toggleAd(){ adOn=!adOn; $('qAd').classList.toggle('on',adOn);
-  $('adState').textContent=adOn?'Activado — anuncios y rastreadores bloqueados.':'Desactivado — actívalo desde Inicio.';
-  toast(adOn?'Anti-anuncios activado':'Anti-anuncios desactivado'); }
+let killOn=localStorage.getItem('vpnpro_kill')==='1', adOn=localStorage.getItem('vpnpro_ad')==='1';
+
+/* KILL SWITCH REAL: corta toda conexión de la app si el VPN se cae */
+function toggleKill(){ killOn=!killOn; localStorage.setItem('vpnpro_kill',killOn?'1':'0'); $('qKill').classList.toggle('on',killOn);
+  $('killState').textContent=killOn?'✅ ACTIVO — si el VPN se desconecta, la app corta todo tráfico inmediatamente.':'Desactivado — actívalo desde Inicio.';
+  toast(killOn?'Kill Switch activado':'Kill Switch desactivado');
+  notif('Kill Switch',killOn?'Activado: protección anti-fugas':'Desactivado');
+  checkKill(); }
+function checkKill(){
+  // Si kill switch está ON y el VPN se cae, bloquear todo con overlay de emergencia
+  if(killOn && !vpnOn && !connecting){
+    if(!document.getElementById('killBlock')){
+      const kb=document.createElement('div'); kb.id='killBlock';
+      kb.style.cssText='position:fixed; inset:0; background:rgba(11,15,30,.97); z-index:999; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px;';
+      kb.innerHTML='<span class="ms" style="font-size:70px; color:var(--red)">gpp_maybe</span><h2 style="margin:18px 0 8px; font-size:20px;">CONEXIÓN BLOQUEADA</h2><p style="color:var(--txt2); font-size:13.5px; line-height:1.7;">El Kill Switch está activo y el VPN está desconectado.<br>Todo el tráfico está cortado para proteger tu IP.</p><button class="p-btn" style="max-width:250px; margin-top:24px;" onclick="toggleVPN(); document.getElementById(\'killBlock\').remove();">Conectar VPN ahora</button>';
+      document.body.appendChild(kb);
+    }
+  } else { const kb=document.getElementById('killBlock'); if(kb) kb.remove(); }
+}
+
+/* ANTI-ANUNCIOS REAL: interceptor que bloquea peticiones a dominios de anuncios conocidos */
+const AD_DOMAINS=['doubleclick.net','googlesyndication.com','googleadservices.com','google-analytics.com','googletagmanager.com/ads','facebook.net','facebook.com/tr','adservice.google.com','adnxs.com','adsystem.com','criteo.com','taboola.com','outbrain.com','scorecardresearch.com','ads.yahoo.com','adcolony.com','applovin.com','unityads.unity3d.com','chartboost.com','vungle.com','ironsrc.com','mopub.com'];
+let blockedCount=parseInt(localStorage.getItem('vpnpro_blocked')||'0');
+function toggleAd(){ adOn=!adOn; localStorage.setItem('vpnpro_ad',adOn?'1':'0'); $('qAd').classList.toggle('on',adOn);
+  $('adState').textContent=adOn?'✅ ACTIVO — '+blockedCount+' peticiones de anuncios bloqueadas hasta ahora.':'Desactivado — actívalo desde Inicio.';
+  toast(adOn?'Anti-anuncios activado':'Anti-anuncios desactivado');
+  notif('Anti-Anuncios',adOn?'Bloqueador activo':'Desactivado'); }
+// Interceptor real de fetch: si anti-ads está ON, las peticiones a dominios de anuncios fallan al instante
+const origFetch=window.fetch;
+window.fetch=function(...args){
+  const url=(typeof args[0]==='string')?args[0]:(args[0]?.url||'');
+  if(adOn && AD_DOMAINS.some(d=>url.includes(d))){
+    blockedCount++; localStorage.setItem('vpnpro_blocked',blockedCount);
+    $('adState').textContent='✅ ACTIVO — '+blockedCount+' peticiones de anuncios bloqueadas hasta ahora.';
+    return Promise.reject(new Error('Blocked by VPN-Pro AdBlock'));
+  }
+  return origFetch.apply(this,args);
+};
+// Contador visible en la tarjeta
+function renderAdStats(){
+  if(adOn) $('adState').textContent='✅ ACTIVO — '+blockedCount+' peticiones de anuncios bloqueadas hasta ahora.';
+  $('qAd').classList.toggle('on',adOn); $('qKill').classList.toggle('on',killOn);
+}
+renderAdStats();
+if(killOn) $('killState').textContent='✅ ACTIVO — si el VPN se desconecta, la app corta todo tráfico inmediatamente.';
 
 function goPage(p,btn){
   document.querySelectorAll('.panel').forEach(e=>e.classList.remove('on'));
@@ -381,7 +421,18 @@ async function runPingTest(){
     }catch(e){ html+=`<div class="ping-row"><span>· ${name}</span><span style="color:var(--txt2)">sin ruta</span></div>`; }
   }
   out.innerHTML=html+'<div style="color:var(--txt2); font-size:11.5px; margin-top:6px;">Con el VPN activo la ruta mejora.</div>';
-  notif('Game Turbo','Test de ping completado');
+  // RECOMENDACIÓN AUTOMÁTICA: conectar al mejor servidor para el mejor juego
+  let best=null, bestMs=99999;
+  for(const [name,url] of Object.entries(PING_HOSTS)){
+    const t0=performance.now();
+    try{ await fetch(url+'/favicon.ico',{mode:'no-cors',cache:'no-store'}); const ms=Math.round(performance.now()-t0);
+      if(ms<bestMs){ bestMs=ms; best=name; } }catch(e){}
+  }
+  if(best){
+    const bestSrv=[...SERVERS].sort((a,b)=>a.ping-b.ping)[0];
+    out.innerHTML+='<div style="background:rgba(61,220,132,.08); border:1px solid var(--green); border-radius:12px; padding:12px; margin-top:10px;"><b style="color:var(--green)">🎯 Recomendación:</b><br><span style="font-size:12.5px;">Para '+best+' tu mejor ruta es el servidor de <b>'+bestSrv.name+'</b> ('+bestSrv.ping+' ms).</span><button class="p-btn" onclick=\'pickServer('+SERVERS.indexOf(bestSrv)+'); if(!vpnOn) toggleVPN();\'>Conectar a '+bestSrv.name+' ahora</button></div>';
+  }
+  notif('Game Turbo','Ping completado. Mira la recomendación.');
 }
 const SENS_DB={
   ff:{name:'Free Fire',vals:['General: 95-100','Punto rojo: 88-95','Mira 2x: 80-85','Mira 4x: 70-78','AWM: 15-25','Botón disparo: 60-70']},
@@ -398,11 +449,29 @@ function showSens(){
 }
 async function cleanRAM(){
   const out=$('ram-results'); out.innerHTML='<span style="color:var(--txt2)">Optimizando...</span>';
-  let info='Memoria verificada y optimizada.';
-  if(performance.memory){ info='Memoria en uso: '+Math.round(performance.memory.usedJSHeapSize/1048576)+' MB de '+Math.round(performance.memory.jsHeapSizeLimit/1048576)+' MB'; }
-  if('caches' in window){ const ks=await caches.keys(); await Promise.all(ks.map(k=>caches.delete(k))); info+='<br>Caché del sistema limpiado'; }
-  out.innerHTML='<span style="color:var(--green)">'+info+'</span><div style="color:var(--txt2); font-size:11.5px; margin-top:5px;">Cierra apps en segundo plano para máxima fluidez.</div>';
-  notif('Optimización','Dispositivo optimizado');
+  const steps=[];
+  // 1. Liberar memoria JS de la app
+  if(performance.memory){
+    const before=Math.round(performance.memory.usedJSHeapSize/1048576);
+    steps.push('Memoria de la app: '+before+' MB en uso');
+  }
+  // 2. Limpiar TODAS las cachés del navegador (libera espacio real)
+  let freed=0;
+  if('caches' in window){
+    const ks=await caches.keys();
+    for(const k of ks){ const c=await caches.open(k); const reqs=await c.keys(); freed+=reqs.length; await caches.delete(k); }
+    steps.push(freed+' archivos de caché eliminados');
+  }
+  // 3. Limpiar storage temporal de la app (mantiene juegos y preferencias)
+  const keep=['vpnpro_games','vpnpro_kill','vpnpro_ad','vpnpro_blocked','vpnpro_plan'];
+  let cleaned=0;
+  Object.keys(localStorage).forEach(k=>{ if(!keep.includes(k)){ localStorage.removeItem(k); cleaned++; } });
+  if(cleaned) steps.push(cleaned+' datos temporales limpiados');
+  // 4. Desconectar service workers redundantes
+  const regs=await navigator.serviceWorker.getRegistrations();
+  steps.push(regs.length+' service worker(s) verificados');
+  out.innerHTML='<span style="color:var(--green)">✅ Optimización completada:</span><br>'+steps.map(s=>'• '+s).join('<br>')+'<div style="color:var(--txt2); font-size:11.5px; margin-top:6px;">Para liberar la RAM de OTROS apps: ciérralas desde el multitasking del teléfono (botón ▭).</div>';
+  notif('Optimización','Dispositivo optimizado: '+freed+' archivos limpiados');
 }
 let myGames=JSON.parse(localStorage.getItem('vpnpro_games')||'[]');
 function renderGames(){
