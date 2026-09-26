@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a1128">
+<title>VPN-Pro — El VPN más rápido y seguro</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',system-ui,Arial,sans-serif; }
+  body { background:#0a1128; color:#e8ecf5; line-height:1.6; }
+  a { text-decoration:none; color:inherit; }
+  .container { max-width:1100px; margin:0 auto; padding:0 20px; }
+
+  /* NAV */
+  nav { position:sticky; top:0; background:rgba(10,17,40,.95); backdrop-filter:blur(10px); z-index:100; border-bottom:1px solid rgba(255,255,255,.08); }
+  .nav-in { display:flex; justify-content:space-between; align-items:center; padding:14px 20px; max-width:1100px; margin:0 auto; }
+  .logo { font-size:22px; font-weight:800; }
+  .logo span { color:#4f8cff; }
+  .nav-links { display:flex; gap:26px; font-size:14px; color:#aab6d4; }
+  .nav-links a:hover { color:#fff; }
+  @media(max-width:700px){ .nav-links{display:none} }
+
+  /* HERO */
+  .hero { text-align:center; padding:80px 20px 60px; background:radial-gradient(ellipse at top, #14265e 0%, #0a1128 65%); }
+  .hero h1 { font-size:clamp(34px,6vw,58px); font-weight:800; line-height:1.15; }
+  .hero h1 span { color:#4f8cff; }
+  .hero p.sub { color:#aab6d4; font-size:18px; max-width:640px; margin:18px auto 34px; }
+  .btn { display:inline-block; padding:15px 36px; border-radius:50px; font-weight:700; font-size:16px; transition:.2s; cursor:pointer; border:none; }
+  .btn-main { background:linear-gradient(90deg,#4f8cff,#2b5fd9); color:#fff; box-shadow:0 8px 30px rgba(79,140,255,.4); }
+  .btn-main:hover { transform:translateY(-2px); }
+  .btn-ghost { border:2px solid #3a4a75; color:#cdd7ee; margin-left:12px; }
+  .stores { margin-top:34px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+  .store { background:#131c3d; border:1px solid #2a3763; border-radius:12px; padding:12px 22px; font-size:14px; display:flex; align-items:center; gap:10px; }
+  .store b { display:block; font-size:15px; }
+  .store small { color:#8492b8; }
+
+  /* STATS */
+  .stats { display:flex; justify-content:center; gap:50px; flex-wrap:wrap; padding:40px 20px; border-top:1px solid rgba(255,255,255,.06); border-bottom:1px solid rgba(255,255,255,.06); }
+  .stat { text-align:center; }
+  .stat b { font-size:30px; color:#4f8cff; display:block; }
+  .stat span { font-size:13px; color:#8492b8; }
+
+  /* FEATURES */
+  section { padding:70px 20px; }
+  h2.sec { text-align:center; font-size:32px; margin-bottom:10px; }
+  p.secsub { text-align:center; color:#8492b8; margin-bottom:45px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px; max-width:1100px; margin:0 auto; }
+  .card { background:#111a3a; border:1px solid #22305c; border-radius:16px; padding:28px; transition:.2s; }
+  .card:hover { transform:translateY(-4px); border-color:#4f8cff; }
+  .card .ico { font-size:34px; }
+  .card h3 { margin:12px 0 8px; font-size:18px; }
+  .card p { color:#9aa7c9; font-size:14.5px; }
+
+  /* DOWNLOAD */
+  .download { background:linear-gradient(180deg,#0d1533,#0a1128); text-align:center; }
+  .dl-btns { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-top:36px; }
+  .dl { width:230px; background:#131c3d; border:2px solid #2a3763; border-radius:18px; padding:26px 18px; transition:.2s; cursor:pointer; }
+  .dl:hover { border-color:#4f8cff; transform:translateY(-4px); }
+  .dl .ico { font-size:42px; }
+  .dl b { display:block; font-size:17px; margin:10px 0 4px; }
+  .dl small { color:#8492b8; }
+
+  /* PRICING */
+  .plans { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:24px; max-width:950px; margin:0 auto; }
+  .plan { background:#111a3a; border:2px solid #22305c; border-radius:20px; padding:34px 28px; text-align:center; position:relative; }
+  .plan.best { border-color:#4f8cff; box-shadow:0 0 40px rgba(79,140,255,.25); }
+  .plan .tag { position:absolute; top:-14px; left:50%; transform:translateX(-50%); background:#4f8cff; color:#fff; font-size:12px; font-weight:700; padding:5px 16px; border-radius:20px; }
+  .plan h3 { font-size:20px; }
+  .plan .price { font-size:42px; font-weight:800; margin:14px 0; }
+  .plan .price small { font-size:15px; color:#8492b8; font-weight:400; }
+  .plan ul { list-style:none; margin:18px 0 26px; font-size:14.5px; color:#aab6d4; }
+  .plan li { padding:6px 0; }
+  .plan li::before { content:"✓ "; color:#3ddc84; font-weight:700; }
+
+  footer { border-top:1px solid rgba(255,255,255,.08); padding:34px 20px; text-align:center; color:#6b7899; font-size:13.5px; }
+
+  /* PWA install banner */
+  #installBar { display:none; position:fixed; bottom:16px; left:50%; transform:translateX(-50%); background:#16224d; border:1px solid #4f8cff; border-radius:14px; padding:14px 20px; display:flex; gap:14px; align-items:center; z-index:200; box-shadow:0 10px 40px rgba(0,0,0,.5); }
+  #installBar button { background:#4f8cff; border:none; color:#fff; font-weight:700; padding:9px 18px; border-radius:9px; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <div class="logo">🛡️ VPN-<span>Pro</span></div>
+    <div class="nav-links">
+      <a href="#funciones">Funciones</a>
+      <a href="#descargar">Descargar</a>
+      <a href="#precios">Precios</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <h1>Internet libre.<br><span>Privacidad total.</span> Cero límites.</h1>
+  <p class="sub">VPN-Pro cifra toda tu conexión con WireGuard®, el protocolo más rápido del mundo. Navega, juega y descarga a máxima velocidad desde cualquier país.</p>
+  <a class="btn btn-main" href="#descargar">⬇ Descargar gratis</a>
+  <a class="btn btn-ghost" href="#precios">Ver planes</a>
+  <div class="stores">
+    <div class="store">🤖 <div><b>Android</b><small>v2.0 · Gratis</small></div></div>
+    <div class="store">🍎 <div><b>iOS</b><small>v2.0 · Gratis</small></div></div>
+    <div class="store">🪟 <div><b>Windows</b><small>v2.0 · Gratis</small></div></div>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="stat"><b>10 Gbps</b><span>Servidores de máxima velocidad</span></div>
+  <div class="stat"><b>AES-256</b><span>Cifrado militar</span></div>
+  <div class="stat"><b>0 logs</b><span>Política estricta sin registros</span></div>
+  <div class="stat"><b>+40</b><span>Países disponibles</span></div>
+</div>
+
+<section id="funciones">
+  <h2 class="sec">¿Por qué VPN-Pro es diferente?</h2>
+  <p class="secsub">Tecnología de nivel empresarial, simple de usar</p>
+  <div class="grid">
+    <div class="card"><div class="ico">⚡</div><h3>Velocidad WireGuard®</h3><p>Hasta 4× más rápido que OpenVPN. Ping bajo para gaming y streaming en 4K sin buffering.</p></div>
+    <div class="card"><div class="ico">🔒</div><h3>Cifrado AES-256</h3><p>El mismo estándar que usan bancos y gobiernos. Tu proveedor de internet no ve nada.</p></div>
+    <div class="card"><div class="ico">🚫</div><h3>Política No-Logs</h3><p>No guardamos historial, IP ni actividad. Tu privacidad es absoluta, verificada.</p></div>
+    <div class="card"><div class="ico">🎬</div><h3>Desbloquea todo</h3><p>Accede a contenido de Netflix US, Hulu, DAZN y webs bloqueadas desde cualquier lugar.</p></div>
+    <div class="card"><div class="ico">🎮</div><h3>Modo Gamer</h3><p>Ruta optimizada para reducir ping en Fortnite, Warzone, Free Fire y más.</p></div>
+    <div class="card"><div class="ico">📱</div><h3>5 dispositivos</h3><p>Una sola cuenta protege tu celular, laptop, tablet y PC al mismo tiempo.</p></div>
+    <div class="card"><div class="ico">💣</div><h3>Kill Switch</h3><p>Si la VPN se cae un segundo, cortamos tu internet para que tu IP nunca se filtre.</p></div>
+    <div class="card"><div class="ico">🌍</div><h3>Servidores propios</h3><p>Hardware dedicado en RAM únicamente — nada se escribe en disco. Nada.</p></div>
+  </div>
+</section>
+
+<section class="download" id="descargar">
+  <h2 class="sec">Descarga VPN-Pro gratis</h2>
+  <p class="secsub">Disponible para todos tus dispositivos. Instalación en menos de 1 minuto.</p>
+  <div class="dl-btns">
+    <div class="dl" onclick="openInstall('android')"><div class="ico">🤖</div><b>Android</b><small>Toca para instalar</small></div>
+    <div class="dl" onclick="openInstall('ios')"><div class="ico">🍎</div><b>iPhone / iPad</b><small>Toca para instalar</small></div>
+    <div class="dl" onclick="openInstall('windows')"><div class="ico">🪟</div><b>Windows Laptop/PC</b><small>Toca para instalar</small></div>
+    <div class="dl" onclick="openInstall('mac')"><div class="ico">🖥️</div><b>Mac</b><small>Toca para instalar</small></div>
+  </div>
+</section>
+
+<!-- MODAL DE INSTALACIÓN POR DISPOSITIVO -->
+<div id="installModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,10,.85); z-index:500; align-items:center; justify-content:center; padding:20px;">
+  <div style="background:#111a3a; border:2px solid #4f8cff; border-radius:22px; max-width:520px; width:100%; padding:34px 28px; text-align:center; max-height:90vh; overflow-y:auto;">
+    <div id="im-ico" style="font-size:56px">🤖</div>
+    <h3 id="im-title" style="font-size:24px; margin:12px 0 4px;">Instalar en Android</h3>
+    <p id="im-sub" style="color:#8492b8; font-size:14px; margin-bottom:22px;">Instalación en 1 minuto</p>
+    <div id="im-steps" style="text-align:left; background:#0d1533; border:1px solid #22305c; border-radius:14px; padding:20px; font-size:14.5px; color:#cdd7ee; line-height:1.8;"></div>
+    <div id="im-action" style="margin-top:24px;"></div>
+    <button onclick="closeInstall()" style="margin-top:16px; background:none; border:1px solid #3a4a75; color:#8492b8; padding:10px 26px; border-radius:30px; cursor:pointer;">Cerrar</button>
+  </div>
+</div>
+
+<script>
+const INSTALL_DATA = {
+  android: {
+    ico:'🤖', title:'Instalar en Android',
+    steps:['1. Toca el botón "Instalar App" de abajo','2. Chrome te preguntará "¿Instalar aplicación?" — acepta','3. VPN-Pro aparecerá como app en tu celular','4. Ábrela, crea tu cuenta y conéctate'],
+    action:'<button onclick="pwaInstall()" class="btn btn-main" style="width:100%">📲 Instalar App</button>'
+  },
+  ios: {
+    ico:'🍎', title:'Instalar en iPhone / iPad',
+    steps:['1. Abre esta página en Safari','2. Toca el botón Compartir ⬆️ (abajo al centro)','3. Elige "Agregar a pantalla de inicio"','4. Toca "Agregar" — VPN-Pro quedará como app'],
+    action:'<div style="background:#0d1533; border:1px solid #4f8cff; border-radius:12px; padding:14px; color:#aab6d4; font-size:13.5px;">💡 En iPhone la instalación es con Safari → Compartir → Agregar a pantalla de inicio</div>'
+  },
+  windows: {
+    ico:'🪟', title:'Instalar en Laptop / PC Windows',
+    steps:['1. Toca el botón "Instalar App" de abajo','2. Acepta cuando el navegador lo pida','3. VPN-Pro se instalará como programa con su propio ícono','4. La encontrarás en tu escritorio y menú de inicio'],
+    action:'<button onclick="pwaInstall()" class="btn btn-main" style="width:100%">⬇ Instalar App en Windows</button>'
+  },
+  mac: {
+    ico:'🖥️', title:'Instalar en Mac',
+    steps:['1. Abre esta página en Safari o Chrome','2. En Safari: Archivo → Agregar al Dock','3. En Chrome: icono ⊕ en la barra de direcciones → Instalar','4. VPN-Pro quedará en tu Dock como app'],
+    action:'<div style="background:#0d1533; border:1px solid #4f8cff; border-radius:12px; padding:14px; color:#aab6d4; font-size:13.5px;">💡 En Mac: Safari → Archivo → Agregar al Dock</div>'
+  }
+};
+function openInstall(dev){
+  const d = INSTALL_DATA[dev];
+  document.getElementById('im-ico').textContent = d.ico;
+  document.getElementById('im-title').textContent = d.title;
+  document.getElementById('im-steps').innerHTML = d.steps.map(s=>'<div>'+s+'</div>').join('');
+  document.getElementById('im-action').innerHTML = d.action;
+  const m = document.getElementById('installModal');
+  m.style.display='flex';
+}
+function closeInstall(){ document.getElementById('installModal').style.display='none'; }
+function pwaInstall(){
+  if(deferred){ deferred.prompt(); deferred=null; }
+  else { alert('Si el botón no abre el instalador:\n\nAndroid → menú ⋮ → "Instalar aplicación"\niPhone → Safari → Compartir → Agregar a inicio'); }
+}
+</script>
+
+<section id="precios">
+  <h2 class="sec">Planes simples y honestos</h2>
+  <p class="secsub">Garantía de devolución de 30 días en todos los planes</p>
+  <div class="plans">
+    <div class="plan">
+      <h3>Gratis</h3>
+      <div class="price">$0<small>/mes</small></div>
+      <ul><li>3 países</li><li>1 dispositivo</li><li>Velocidad estándar</li><li>Sin registro de datos</li></ul>
+      <a class="btn btn-ghost" href="#descargar">Empezar</a>
+    </div>
+    <div class="plan best">
+      <div class="tag">MÁS POPULAR</div>
+      <h3>Premium</h3>
+      <div class="price">$2.99<small>/mes</small></div>
+      <ul><li>+40 países</li><li>5 dispositivos</li><li>Velocidad máxima 10 Gbps</li><li>Modo Gamer + Streaming</li><li>Kill Switch incluido</li></ul>
+      <a class="btn btn-main" href="#descargar">Obtener Premium</a>
+    </div>
+    <div class="plan">
+      <h3>Lifetime</h3>
+      <div class="price">$39<small>único pago</small></div>
+      <ul><li>Todo lo de Premium</li><li>Para siempre</li><li>Soporte prioritario 24/7</li><li>Nuevas funciones primero</li></ul>
+      <a class="btn btn-ghost" href="#descargar">Comprar</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  🛡️ <b>VPN-Pro</b> — Privacidad sin compromisos.<br><br>
+  WireGuard® es marca registrada de Jason A. Donenfeld.
+</footer>
+
+<div id="installBar">📲 Instala VPN-Pro en tu dispositivo <button onclick="installPWA()">Instalar</button></div>
+
+<script>
+let deferred;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferred = e; document.getElementById('installBar').style.display='flex'; });
+function installPWA(){ if(deferred){ deferred.prompt(); deferred=null; document.getElementById('installBar').style.display='none'; } }
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
