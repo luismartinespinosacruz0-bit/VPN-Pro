@@ -671,6 +671,41 @@ async function runLeakTest(){
 const ADSTERRA_DIRECT_LINK = 'https://www.profitableratecpmnetwork.com/w5dns3jxv?key=4c4284dea12cb21c2873b7246862ab76';
 // Mostrar banner de anuncio dentro de la app (solo cuando está instalada, no en la web de descarga)
 setTimeout(()=>{ const b=document.getElementById('appAdBanner'); if(b && document.querySelector('.app') && document.querySelector('.app').style.display!=='none'){ b.style.display='flex'; } },1200);
+// ====== ANUNCIOS QUE APARECEN DE REPENTE (como apps gratis) ======
+// Popup de anuncio: pantalla completa tipo intersticial con cuenta regresiva
+function showPopAd(){
+  const app=document.querySelector('.app');
+  if(!app || app.style.display==='none') return; // solo en la app instalada
+  if(sessionStorage.getItem('vpnpro_adshown')) return; // 1 por sesión
+  const ov=document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;background:rgba(2,6,20,.96);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;';
+  ov.innerHTML=`
+    <div style="font-size:13px;color:#8fa3d9;letter-spacing:1px;margin-bottom:14px">ANUNCIO · VPN-PRO GRATIS</div>
+    <div style="font-size:20px;font-weight:800;color:#fff;text-align:center;line-height:1.4;max-width:300px">🎁 Oferta especial de nuestro patrocinador</div>
+    <div style="font-size:13.5px;color:#8fa3d9;text-align:center;margin:12px 0 22px;max-width:280px">Toca el botón para ver la oferta y apoyar VPN-Pro. Se cierra en <b id=\"popCnt\" style=\"color:#4d8dff\">5</b>s</div>
+    <a href=\"${ADSTERRA_DIRECT_LINK}\" target=\"_blank\" rel=\"noopener\" style=\"background:linear-gradient(135deg,#4d8dff,#3b6fd9);color:#fff;text-decoration:none;padding:14px 34px;border-radius:14px;font-weight:800;font-size:15px\">VER OFERTA</a>
+    <button id=\"popClose\" disabled style=\"margin-top:22px;background:none;border:1px solid #33406e;color:#5d6b9d;padding:10px 26px;border-radius:12px;font-size:13px;cursor:not-allowed\">Espera 5s…</button>`;
+  document.body.appendChild(ov);
+  let c=5; const cnt=ov.querySelector('#popCnt'), btn=ov.querySelector('#popClose');
+  const iv=setInterval(()=>{ c--; cnt.textContent=c; btn.textContent='Espera '+c+'s…';
+    if(c<=0){ clearInterval(iv); btn.disabled=false; btn.style.cursor='pointer'; btn.style.borderColor='#4d8dff'; btn.style.color='#4d8dff'; btn.textContent='✕ Cerrar anuncio'; btn.onclick=()=>ov.remove(); } },1000);
+}
+// Se dispara: al abrir la app (5 seg) y aleatoriamente al cambiar de pestaña (15% probabilidad, máx 1 cada 4 min)
+setTimeout(showPopAd,5000);
+let lastPop=Date.now();
+function maybePopAd(){
+  const app=document.querySelector('.app');
+  if(!app || app.style.display==='none') return;
+  if(Date.now()-lastPop<240000) return;
+  if(Math.random()<0.15){ lastPop=Date.now(); showPopAdForce(); }
+}
+function showPopAdForce(){
+  sessionStorage.removeItem('vpnpro_adshown');
+  const old=document.getElementById('popAdOv'); if(old) old.remove();
+  showPopAd();
+}
+// Al cambiar de pestaña en la app
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>setTimeout(maybePopAd,600)));
 // Anuncio intersticial: se abre cada 3 desconexiones de VPN (como las apps VPN reales)
 let discCount=parseInt(localStorage.getItem('vpnpro_discs')||'0');
 let supportViews=parseInt(localStorage.getItem('vpnpro_supports')||'0');
