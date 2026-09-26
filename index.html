@@ -169,7 +169,50 @@
 </style>
 </head>
 <body>
-<div class="app">
+<!-- ====== PANTALLA WEB (SOLO INSTALACIÓN) ====== -->
+<div id="webGate" style="display:flex; flex-direction:column; min-height:100vh;">
+  <header>
+    <div class="logo"><span class="ms fill" style="color:var(--blue); font-size:28px">shield</span>VPN-<span>Pro</span></div>
+    <div class="pro-badge">GRATIS</div>
+  </header>
+  <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:30px 24px; text-align:center;">
+    <div style="width:90px; height:90px; border-radius:26px; background:linear-gradient(135deg,#1d2a5c,#111a3d); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; margin-bottom:22px; box-shadow:0 0 50px rgba(79,140,255,.2);">
+      <span class="ms fill" style="font-size:50px; color:var(--blue)">shield</span>
+    </div>
+    <h1 style="font-size:26px; font-weight:800; line-height:1.2;">VPN-Pro<br><span style="color:var(--blue)">para tu dispositivo</span></h1>
+    <p style="color:var(--txt2); font-size:14.5px; line-height:1.7; margin:14px 0 26px; max-width:320px;">VPN gratis, rápido y seguro. La app se instala en tu equipo — esta página es solo para la descarga.</p>
+    <div id="webGateDevice" style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px 22px; margin-bottom:24px; width:100%; max-width:340px;">
+      <div style="font-size:11px; color:var(--txt2); letter-spacing:.5px; margin-bottom:6px;">DISPOSITIVO DETECTADO</div>
+      <div id="deviceName" style="font-size:17px; font-weight:800;"></div>
+    </div>
+    <button class="p-btn" style="max-width:340px; min-height:52px; font-size:16px;" onclick="startInstallFromGate()">
+      <span class="ms">download</span>INSTALAR VPN-PRO GRATIS
+    </button>
+    <button onclick="openGatePicker()" style="margin-top:14px; background:none; border:none; color:var(--txt2); font-size:13.5px; cursor:pointer; text-decoration:underline;">instalar en otro dispositivo</button>
+    <div style="display:flex; gap:20px; margin-top:30px; color:var(--txt2); font-size:11.5px;">
+      <span>✓ Sin registro</span><span>✓ Sin límites</span><span>✓ Auto-actualizable</span>
+    </div>
+  </div>
+  <div class="ver">VPN-Pro v2.2 — 10 servidores · WireGuard · AES-256</div>
+</div>
+
+<!-- ====== PICKER DE DISPOSITIVO (GATE) ====== -->
+<div id="gatePicker" style="display:none; position:fixed; inset:0; background:rgba(0,0,10,.9); z-index:90; align-items:center; justify-content:center; padding:20px;">
+  <div style="background:var(--bg2); border:2px solid var(--blue); border-radius:22px; max-width:440px; width:100%; padding:30px 24px; text-align:center;">
+    <h3 style="font-size:20px; margin-bottom:6px;">¿Para qué dispositivo?</h3>
+    <p style="color:var(--txt2); font-size:13px; margin-bottom:20px;">Elige donde quieres instalar VPN-Pro</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+      <button onclick="gateInstall('android')" style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:22px 10px; color:var(--txt); cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:8px;"><span class="ms" style="font-size:34px; color:var(--blue)">android</span><b style="font-size:13.5px">Android</b></button>
+      <button onclick="gateInstall('ios')" style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:22px 10px; color:var(--txt); cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:8px;"><span class="ms" style="font-size:34px; color:var(--blue)">phone_iphone</span><b style="font-size:13.5px">iPhone</b></button>
+      <button onclick="gateInstall('windows')" style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:22px 10px; color:var(--txt); cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:8px;"><span class="ms" style="font-size:34px; color:var(--blue)">desktop_windows</span><b style="font-size:13.5px">Windows</b></button>
+      <button onclick="gateInstall('mac')" style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:22px 10px; color:var(--txt); cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:8px;"><span class="ms" style="font-size:34px; color:var(--blue)">laptop_mac</span><b style="font-size:13.5px">Mac</b></button>
+    </div>
+    <button onclick="document.getElementById('gatePicker').style.display='none'" style="margin-top:18px; background:none; border:1px solid var(--border); color:var(--txt2); padding:10px 26px; border-radius:30px; cursor:pointer;">Cancelar</button>
+  </div>
+</div>
+
+<!-- ====== APP REAL (SOLO CUANDO ESTÁ INSTALADA) ====== -->
+<div class="app" id="realApp" style="display:none">
 
   <!-- HOME -->
   <div class="panel on" id="page-home">
@@ -311,6 +354,49 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<script>
+/* ====== DETECTOR: ¿INSTALADA O EN LA WEB? ====== */
+function isStandalone(){
+  return window.matchMedia('(display-mode: standalone)').matches
+    || window.matchMedia('(display-mode: fullscreen)').matches
+    || window.matchMedia('(display-mode: minimal-ui)').matches
+    || window.navigator.standalone === true; // iOS Safari
+}
+function detectDevice(){
+  const ua=navigator.userAgent;
+  if(/iPhone|iPad|iPod/.test(ua)) return {type:'ios', name:'iPhone / iPad', ico:'phone_iphone'};
+  if(/Android/.test(ua)) return {type:'android', name:'Android', ico:'android'};
+  if(/Windows/.test(ua)) return {type:'windows', name:'PC Windows', ico:'desktop_windows'};
+  if(/Mac/.test(ua)) return {type:'mac', name:'Mac', ico:'laptop_mac'};
+  return {type:'android', name:'Dispositivo móvil', ico:'android'};
+}
+(function initGate(){
+  const app=$('realApp'), gate=$('webGate');
+  if(isStandalone()){
+    // Está instalada: mostrar app completa
+    gate.style.display='none'; app.style.display='block';
+  } else {
+    // En la web normal: mostrar solo pantalla de instalación
+    gate.style.display='flex'; app.style.display='none';
+    const d=detectDevice();
+    $('deviceName').textContent=d.name;
+    window._device=d.type;
+  }
+})();
+function startInstallFromGate(){
+  const d=window._device||detectDevice().type;
+  // Intentar instalador nativo PWA primero (Android/Chrome/Edge)
+  if(deferred){ pwaInstall(); return; }
+  openInstall(d); // si no hay prompt nativo, mostrar instrucciones del dispositivo
+}
+function openGatePicker(){ $('gatePicker').style.display='flex'; }
+function gateInstall(d){ $('gatePicker').style.display='none'; if(deferred){ pwaInstall(); return; } openInstall(d); }
+// Si el usuario instala desde la web, cambiar a la app al instante
+window.addEventListener('appinstalled',()=>{ location.reload(); });
+// Si pasa de web a standalone (instaló), recargar para mostrar la app
+window.matchMedia('(display-mode: standalone)').addEventListener?.('change',e=>{ if(e.matches) location.reload(); });
+</script>
 
 <script>
 let vpnOn=false, connecting=false, secs=0, timerIv=null, simIv=null;
