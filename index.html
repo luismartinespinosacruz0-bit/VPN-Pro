@@ -728,14 +728,29 @@ let supportViews=parseInt(localStorage.getItem('vpnpro_supports')||'0');
 function renderSupport(){ const el=$('supportCount'); if(el && supportViews>0) el.textContent='('+supportViews+' apoyos registrados)'; }
 renderSupport();
 function openSupport(){
-  if(ADSTERRA_DIRECT_LINK.startsWith('http')){
-    supportViews++; localStorage.setItem('vpnpro_supports',supportViews); renderSupport();
-    window.open(ADSTERRA_DIRECT_LINK,'_blank');
-    notif('💜 ¡Gracias!','Tu apoyo ayuda a mantener VPN-Pro gratis');
-  } else {
-    toast('Configura tu Direct Link de Adsterra en Ajustes');
-    alert('Para activar tu monetización:\n\n1. Regístrate gratis en adsterra.com como Publisher\n2. Agrega tu web: luismartinespinosacruz0-bit.github.io/VPN-Pro/\n3. Copia tu Direct Link (sección Direct Links)\n4. Pégalo en el código donde dice ADSTERRA_DIRECT_LINK\n\nAprobación: menos de 10 minutos. Pagan por PayPal, WebMoney, cripto (mínimo $5).');
-  }
+  supportViews++; localStorage.setItem('vpnpro_supports',supportViews); renderSupport();
+  // Muestra el anuncio AQUÍ MISMO en la app (300x250 visible), sin mandar a ninguna página
+  const ov=document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;background:rgba(2,6,20,.96);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;';
+  ov.innerHTML=`
+    <div style="font-size:12px;color:#8fa3d9;letter-spacing:1px;margin-bottom:10px">💜 GRACIAS POR APOYAR VPN-PRO</div>
+    <div id="supAdBox" style="width:300px; height:250px; background:#0a1128; border:1px solid #33406e; border-radius:12px; overflow:hidden; display:flex; align-items:center; justify-content:center;"></div>
+    <div style="font-size:12px;color:#8fa3d9;text-align:center;margin:12px 0 18px">Mira el anuncio de nuestro patrocinador — se cierra en <b id=\"supCnt\" style=\"color:#4d8dff\">5</b>s</div>
+    <button id=\"supClose\" disabled style=\"background:none;border:1px solid #33406e;color:#5d6b9d;padding:10px 26px;border-radius:12px;font-size:13px;cursor:not-allowed\">Espera 5s…</button>`;
+  document.body.appendChild(ov);
+  // Anuncio real de Adsterra renderizado dentro de la app
+  try{
+    const cfg=document.createElement('script');
+    cfg.textContent="atOptions = {'key':'b0da0298d6a6232b042670e95a138aee','format':'iframe','height':250,'width':300,'params':{}};";
+    const inv=document.createElement('script');
+    inv.src='https://www.highrevenueformat.com/b0da0298d6a6232b042670e95a138aee/invoke.js';
+    inv.async=true;
+    ov.querySelector('#supAdBox').appendChild(cfg); ov.querySelector('#supAdBox').appendChild(inv);
+  }catch(e){}
+  let c=5; const cnt=ov.querySelector('#supCnt'), btn=ov.querySelector('#supClose');
+  const iv=setInterval(()=>{ c--; cnt.textContent=c; btn.textContent='Espera '+c+'s…';
+    if(c<=0){ clearInterval(iv); btn.disabled=false; btn.style.cursor='pointer'; btn.style.borderColor='#4d8dff'; btn.style.color='#4d8dff'; btn.textContent='✕ Cerrar'; btn.onclick=()=>ov.remove(); } },1000);
+  notif('💜 ¡Gracias!','Tu apoyo ayuda a mantener VPN-Pro gratis');
 }
 
 const INSTALL_DATA={
