@@ -388,7 +388,7 @@ function detectDevice(){
 function startInstallFromGate(){
   const d=window._device||detectDevice().type;
   // Intentar instalador nativo PWA primero (Android/Chrome/Edge)
-  if(typeof deferred!=='undefined' && deferred){ pwaInstall(); return; }
+  if(window._pwaReady && deferred){ pwaInstall(); return; }
   openInstall(d); // si no hay prompt nativo, mostrar instrucciones del dispositivo
 }
 function openGatePicker(){ $('gatePicker').style.display='flex'; }
@@ -675,8 +675,15 @@ const INSTALL_DATA={
 function openInstall(d){ const x=INSTALL_DATA[d]; $('im-ico-ms').textContent=x.ico; $('im-title').textContent=x.title; $('im-steps').innerHTML=x.steps.map(s=>'<div>'+s+'</div>').join(''); $('im-action').innerHTML=x.action; $('installModal').style.display='flex'; }
 function closeInstall(){ $('installModal').style.display='none'; }
 let deferred=null;
-window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); deferred=e; });
-function pwaInstall(){ if(deferred){ deferred.prompt(); deferred=null; } else toast('Usa el menú ⋮ → "Instalar aplicación"'); }
+window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); deferred=e; window._pwaReady=true; });
+function pwaInstall(){
+  if(deferred){ deferred.prompt(); deferred=null; return; }
+  // Sin prompt nativo: mostrar las instrucciones manuales del dispositivo detectado
+  const d=window._device||detectDevice().type;
+  if(d==='ios'){ toast('En iPhone: usa Safari → Compartir → "Agregar a pantalla de inicio"'); }
+  else{ toast('Abre el menú del navegador (⋮ o ⋯) y elige "Instalar aplicación"'); }
+  openInstall(d);
+}
 
 function shareApp(){
   const d={title:'VPN-Pro',text:'VPN-Pro gratis y rapidísimo:',url:'https://luismartinespinosacruz0-bit.github.io/VPN-Pro/'};
