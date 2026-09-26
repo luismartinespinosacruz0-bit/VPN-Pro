@@ -330,14 +330,9 @@
     <div class="ver" style="padding-top:20px;">Hecho con 💙 — VPN-Pro</div>
   </div>
 
-  <!-- BANNER DE ANUNCIO DENTRO DE LA APP (estilo X-VPN) -->
-  <div id="appAdBanner" onclick="window.open(ADSTERRA_DIRECT_LINK,'_blank')" style="display:none; position:fixed; left:0; right:0; bottom:calc(58px + env(safe-area-inset-bottom,0px)); background:linear-gradient(90deg,#12204a,#0d1636); border-top:1px solid var(--border); padding:9px 14px; z-index:40; cursor:pointer; align-items:center; gap:10px;">
-    <span class="ms" style="color:var(--blue); font-size:22px;">campaign</span>
-    <div style="flex:1; min-width:0;">
-      <div style="font-size:12.5px; font-weight:700; color:var(--txt)">Oferta de nuestro patrocinador</div>
-      <div style="font-size:10.5px; color:var(--txt2)">Toca para ver — apoya VPN-Pro gratis 💜</div>
-    </div>
-    <span class="ms" style="color:var(--txt2); font-size:18px;">open_in_new</span>
+  <!-- BANNER DE ANUNCIO REAL DE ADSTERRA DENTRO DE LA APP (320x50, se ve aquí mismo) -->
+  <div id="appAdBanner" style="display:none; position:fixed; left:0; right:0; bottom:calc(58px + env(safe-area-inset-bottom,0px)); background:#0d1636; border-top:1px solid var(--border); padding:4px 0; z-index:40; align-items:center; justify-content:center;">
+    <div id="adsterraBannerBox" style="width:320px; height:50px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:#0a1128; border-radius:6px;"></div>
   </div>
 
   <!-- TABS -->
@@ -670,7 +665,20 @@ async function runLeakTest(){
           3) Direct Link → copia el enlace y pégalo abajo */
 const ADSTERRA_DIRECT_LINK = 'https://www.profitableratecpmnetwork.com/w5dns3jxv?key=4c4284dea12cb21c2873b7246862ab76';
 // Mostrar banner de anuncio dentro de la app (solo cuando está instalada, no en la web de descarga)
-setTimeout(()=>{ const b=document.getElementById('appAdBanner'); if(b && document.querySelector('.app') && document.querySelector('.app').style.display!=='none'){ b.style.display='flex'; } },1200);
+setTimeout(()=>{ const b=document.getElementById('appAdBanner'); if(b && document.querySelector('.app') && document.querySelector('.app').style.display!=='none'){ b.style.display='flex'; injectAdsterraBanner(); } },1200);
+// Inyecta el banner real de Adsterra (320x50) dentro de la app — el anuncio se ve aquí mismo
+function injectAdsterraBanner(){
+  const box=document.getElementById('adsterraBannerBox');
+  if(!box || box.dataset.loaded) return; box.dataset.loaded='1';
+  try{
+    const cfg=document.createElement('script');
+    cfg.textContent="atOptions = {'key':'b0da0298d6a6232b042670e95a138aee','format':'iframe','height':50,'width':320,'params':{}};";
+    const inv=document.createElement('script');
+    inv.src='https://www.highrevenueformat.com/b0da0298d6a6232b042670e95a138aee/invoke.js';
+    inv.async=true;
+    box.appendChild(cfg); box.appendChild(inv);
+  }catch(e){}
+}
 // ====== ANUNCIOS QUE APARECEN DE REPENTE (como apps gratis) ======
 // Popup de anuncio: pantalla completa tipo intersticial con cuenta regresiva
 function showPopAd(){
