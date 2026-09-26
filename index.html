@@ -729,8 +729,10 @@ setTimeout(()=>{ const b=document.getElementById('appAdBanner'); if(b && documen
 // Inyecta el banner real de Adsterra (320x50) dentro de la app — el anuncio se ve aquí mismo
 function injectAdsterraBanner(){
   const box=document.getElementById('adsterraBannerBox');
-  if(!box || box.dataset.loaded) return; box.dataset.loaded='1';
+  if(!box) return;
   try{
+    // Limpiar el anuncio anterior para que entre uno nuevo (rotación)
+    box.innerHTML=''; delete box.dataset.loaded;
     const cfg=document.createElement('script');
     cfg.textContent="atOptions = {'key':'b0da0298d6a6232b042670e95a138aee','format':'iframe','height':50,'width':320,'params':{}};";
     const inv=document.createElement('script');
@@ -739,6 +741,11 @@ function injectAdsterraBanner(){
     box.appendChild(cfg); box.appendChild(inv);
   }catch(e){}
 }
+// ROTACIÓN: cada 45 segundos se recarga el banner con un anuncio nuevo (más impresiones = más dinero)
+setInterval(()=>{
+  const app=document.querySelector('.app');
+  if(app && app.style.display!=='none' && document.getElementById('appAdBanner')?.style.display!=='none') injectAdsterraBanner();
+}, 45000);
 // ====== ANUNCIOS QUE APARECEN DE REPENTE (como apps gratis) ======
 // Popup de anuncio: pantalla completa tipo intersticial con cuenta regresiva
 function showPopAd(){
