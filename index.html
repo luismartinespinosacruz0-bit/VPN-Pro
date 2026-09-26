@@ -412,10 +412,46 @@ function startInstallFromGate(){
 }
 function openGatePicker(){ $('gatePicker').style.display='flex'; }
 function gateInstall(d){ $('gatePicker').style.display='none'; if(deferred){ pwaInstall(); return; } openInstall(d); }
-// Si el usuario instala desde la web, cambiar a la app al instante
-window.addEventListener('appinstalled',()=>{ location.reload(); });
-// Si pasa de web a standalone (instaló), recargar para mostrar la app
-window.matchMedia('(display-mode: standalone)').addEventListener?.('change',e=>{ if(e.matches) location.reload(); });
+// FLUJO DE INSTALACIÓN CORRECTO (como apps de verdad):
+// PASO 1: instalar → pantalla de éxito con botón SEPARADO para abrir
+// PASO 2: el usuario da clic a "Abrir VPN-Pro" cuando quiera
+window.addEventListener('appinstalled',()=>{
+  try{ localStorage.setItem('vpnpro_installed','1'); }catch(e){}
+  showInstallSuccess();
+});
+window.matchMedia('(display-mode: standalone)').addEventListener?.('change',e=>{ if(e.matches){ try{ localStorage.setItem('vpnpro_installed','1'); }catch(e){} } });
+function showInstallSuccess(){
+  // Cerrar todos los modales de instalación
+  ['installModal','gatePicker'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
+  const d=window._device||detectDevice().type;
+  const isPC=(d==='windows'||d==='mac');
+  const gate=document.getElementById('webGate');
+  const gateInner=gate.querySelector('div')||gate;
+  // Reemplaza el contenido de la pantalla de instalación por la confirmación en 2 pasos
+  gate.style.display='flex';
+  gateInner.innerHTML=`
+    <div style="font-size:56px; margin-bottom:12px;">✅</div>
+    <h1 style="font-size:24px; font-weight:800;">¡VPN-Pro instalado!</h1>
+    <p style="color:var(--txt2); font-size:14px; line-height:1.7; margin:14px 0 22px; max-width:320px;">
+      La app ya está en tu ${isPC?'computadora':'teléfono'}.<br>
+      <b style="color:var(--txt)">Paso final:</b> ábrela desde su ícono${isPC?' en tu escritorio o menú de inicio':' en tu pantalla de inicio'}.
+    </p>
+    <button class="p-btn" style="max-width:320px; min-height:52px; font-size:15px;" onclick="openInstalledApp()">
+      <span class="ms">rocket_launch</span>ABRIR VPN-PRO AHORA
+    </button>
+    <p style="color:var(--txt2); font-size:12px; margin-top:16px;">💡 También puedes abrirla cuando quieras desde el ícono${isPC?' del escritorio':' de tu pantalla de inicio'} — como cualquier otra app.</p>`;
+}
+function openInstalledApp(){
+  // Intenta abrir la app instalada (PWA standalone). En la mayoría de casos ya está abierta
+  // tras instalar; el botón deja la experiencia clara y marca el paso como completado.
+  if(window.matchMedia('(display-mode: standalone)').matches){
+    location.reload(); // ya estamos dentro de la app: cargar la interfaz completa
+    return;
+  }
+  // Si el navegador no cambió a standalone aún (Windows/Chrome a veces demora):
+  toast('Busca el ícono de VPN-Pro y ábrelo desde ahí');
+  showInstallSuccess(); // mantener la pantalla de éxito hasta que lo haga
+}
 </script>
 
 <script>
