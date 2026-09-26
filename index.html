@@ -9,80 +9,86 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<!-- ICONOS OFICIALES DE GOOGLE - los mismos de las apps profesionales -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..700,0..1,0&display=block">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',system-ui,-apple-system,sans-serif; -webkit-tap-highlight-color:transparent; }
   :root{
-    --bg:#0b0f1e; --bg2:#111730; --card:#151c3a; --card2:#1a2248;
+    --bg:#0b0f1e; --bg2:#111730; --card:#151c3a;
     --blue:#4f8cff; --blue2:#2b5fd9; --green:#3ddc84; --red:#ff5c5c; --yellow:#f5c518;
     --txt:#eef2fb; --txt2:#8b97b8; --border:#242e58;
   }
   body { background:var(--bg); color:var(--txt); min-height:100vh; }
   .app { max-width:430px; margin:0 auto; min-height:100vh; position:relative; padding-bottom:86px; }
-  .ic { width:1em; height:1em; display:inline-block; vertical-align:-0.125em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
-  .ic.filled { fill:currentColor; stroke:none; }
+
+  /* Material Symbols config */
+  .ms { font-family:'Material Symbols Rounded'; font-weight:normal; font-style:normal; font-size:24px; line-height:1;
+    letter-spacing:normal; text-transform:none; display:inline-block; white-space:nowrap; word-wrap:normal;
+    direction:ltr; -webkit-font-feature-settings:'liga'; -webkit-font-smoothing:antialiased; font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; user-select:none; }
+  .ms.fill { font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24; }
 
   /* ===== HEADER ===== */
   header { display:flex; justify-content:space-between; align-items:center; padding:16px 20px 8px; }
   .logo { font-size:19px; font-weight:800; display:flex; align-items:center; gap:9px; }
-  .logo .shield { width:27px; height:27px; }
+  .logo .ms { font-size:28px; color:var(--blue); font-variation-settings:'FILL' 1,'wght' 500; }
   .logo span { color:var(--blue); }
   .pro-badge { background:linear-gradient(90deg,#4f8cff,#2b5fd9); font-size:10px; font-weight:800; padding:3px 9px; border-radius:20px; letter-spacing:.5px; }
 
-  /* ===== STATUS BAR ===== */
+  /* ===== STATUS ===== */
   .status-row { display:flex; justify-content:center; gap:10px; padding:10px 20px 0; }
   .chip { display:flex; align-items:center; gap:7px; background:var(--card); border:1px solid var(--border); border-radius:30px; padding:7px 14px; font-size:12px; color:var(--txt2); }
+  .chip .ms { font-size:16px; color:var(--blue); }
   .dot { width:8px; height:8px; border-radius:50%; background:var(--red); animation:pulse 2s infinite; }
   .dot.on { background:var(--green); }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 
-  /* ===== CONNECT AREA ===== */
-  .connect-area { display:flex; flex-direction:column; align-items:center; padding:34px 20px 10px; position:relative; }
+  /* ===== CONNECT ===== */
+  .connect-area { display:flex; flex-direction:column; align-items:center; padding:30px 20px 10px; }
   .ip-line { font-size:13px; color:var(--txt2); margin-bottom:4px; display:flex; align-items:center; gap:6px; }
+  .ip-line .ms { font-size:15px; }
   .ip-line b { color:var(--txt); }
-  .timer { font-size:26px; font-weight:700; letter-spacing:1px; color:var(--txt); margin:6px 0 20px; font-variant-numeric:tabular-nums; }
-
-  .bigbtn { position:relative; width:210px; height:210px; border-radius:50%; border:none; cursor:pointer; background:radial-gradient(circle at 35% 30%, #1d2a5c, #111a3d 70%);
-    box-shadow:0 0 0 10px rgba(79,140,255,.06), 0 0 60px rgba(79,140,255,.15), inset 0 2px 20px rgba(255,255,255,.05);
+  .timer { font-size:26px; font-weight:700; margin:6px 0 18px; font-variant-numeric:tabular-nums; }
+  .bigbtn { position:relative; width:205px; height:205px; border-radius:50%; border:none; cursor:pointer; background:radial-gradient(circle at 35% 30%, #1d2a5c, #111a3d 70%);
+    box-shadow:0 0 0 10px rgba(79,140,255,.06), 0 0 60px rgba(79,140,255,.15);
     display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; transition:.25s; }
   .bigbtn:active { transform:scale(.96); }
-  .bigbtn .power { width:62px; height:62px; color:var(--blue); }
-  .bigbtn .state { font-size:17px; font-weight:800; letter-spacing:1.5px; }
+  .bigbtn .ms.power { font-size:62px; color:var(--blue); font-variation-settings:'FILL' 1,'wght' 400; }
+  .bigbtn .state { font-size:17px; font-weight:800; letter-spacing:1.5px; text-align:center; }
   .bigbtn .sub { font-size:11.5px; color:var(--txt2); }
-  .bigbtn.connected { box-shadow:0 0 0 10px rgba(61,220,132,.07), 0 0 80px rgba(61,220,132,.25), inset 0 2px 20px rgba(255,255,255,.05); }
-  .bigbtn.connected .power { color:var(--green); }
+  .bigbtn.connected { box-shadow:0 0 0 10px rgba(61,220,132,.07), 0 0 80px rgba(61,220,132,.25); }
+  .bigbtn.connected .ms.power { color:var(--green); }
   .ring { position:absolute; inset:-14px; border-radius:50%; border:2px solid rgba(79,140,255,.18); animation:ringPulse 2.4s infinite; }
   .bigbtn.connected .ring { border-color:rgba(61,220,132,.3); }
   @keyframes ringPulse { 0%{transform:scale(.97); opacity:.8} 70%{transform:scale(1.08); opacity:0} 100%{opacity:0} }
-  .connecting .power { animation:spin 1.2s linear infinite; }
+  .connecting .ms.power { animation:spin 1.2s linear infinite; }
   @keyframes spin { to{transform:rotate(360deg)} }
 
-  /* ===== SPEED ===== */
-  .speeds { display:flex; gap:12px; padding:22px 20px 8px; }
-  .speed-box { flex:1; background:var(--card); border:1px solid var(--border); border-radius:16px; padding:14px 16px; }
-  .speed-box .lbl { font-size:11px; color:var(--txt2); display:flex; align-items:center; gap:6px; }
-  .speed-box .lbl .ic { color:var(--blue); }
+  /* ===== SPEEDS ===== */
+  .speeds { display:flex; gap:12px; padding:20px 20px 8px; }
+  .speed-box { flex:1; background:var(--card); border:1px solid var(--border); border-radius:16px; padding:13px 15px; }
+  .speed-box .lbl { font-size:11px; color:var(--txt2); display:flex; align-items:center; gap:5px; }
+  .speed-box .lbl .ms { font-size:15px; color:var(--blue); }
   .speed-box .val { font-size:20px; font-weight:800; margin-top:5px; font-variant-numeric:tabular-nums; }
   .speed-box .unit { font-size:11px; color:var(--txt2); font-weight:400; }
 
-  /* ===== SERVER SELECT ===== */
-  .server-card { margin:12px 20px; background:var(--card); border:1px solid var(--border); border-radius:18px; overflow:hidden; }
-  .server-btn { width:100%; display:flex; align-items:center; gap:14px; padding:16px; background:none; border:none; color:var(--txt); cursor:pointer; text-align:left; }
-  .flagbox { width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#1d2a5c,#111a3d); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .flagbox svg { width:24px; height:24px; color:var(--blue); }
+  /* ===== SERVER ===== */
+  .server-card { margin:12px 20px; background:var(--card); border:1px solid var(--border); border-radius:18px; }
+  .server-btn { width:100%; display:flex; align-items:center; gap:14px; padding:15px 16px; background:none; border:none; color:var(--txt); cursor:pointer; text-align:left; }
+  .flagbox { width:44px; height:44px; border-radius:50%; background:rgba(79,140,255,.12); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .flagbox .ms { font-size:24px; color:var(--blue); }
   .server-info { flex:1; }
   .server-info .lbl { font-size:10.5px; color:var(--txt2); letter-spacing:.5px; }
-  .server-info .name { font-size:15.5px; font-weight:700; margin-top:2px; }
+  .server-info .name { font-size:15px; font-weight:700; margin-top:2px; }
   .server-info .load { font-size:11.5px; color:var(--green); margin-top:2px; }
-  .chev { color:var(--txt2); }
+  .chev { color:var(--txt2); font-size:22px !important; }
 
-  /* ===== QUICK GRID ===== */
+  /* ===== QUICK ===== */
   .quick { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; padding:6px 20px 14px; }
-  .q { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:15px 6px 13px; text-align:center; cursor:pointer; transition:.2s; }
+  .q { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:14px 6px 12px; text-align:center; cursor:pointer; transition:.2s; }
   .q:active { transform:scale(.94); }
-  .q .ico { display:flex; justify-content:center; margin-bottom:7px; }
-  .q .ico svg { width:24px; height:24px; color:var(--blue); }
-  .q.on .ico svg { color:var(--green); }
-  .q .t { font-size:10.5px; color:var(--txt2); font-weight:600; line-height:1.3; }
+  .q .ms { font-size:26px; color:var(--blue); }
+  .q.on .ms { color:var(--green); font-variation-settings:'FILL' 1,'wght' 500; }
+  .q .t { font-size:10.5px; color:var(--txt2); font-weight:600; line-height:1.3; margin-top:6px; }
   .q.on { border-color:var(--green); background:rgba(61,220,132,.08); }
 
   /* ===== SHEET ===== */
@@ -91,184 +97,131 @@
   .sheet.open { transform:translate(-50%,0); }
   .sheet-head { padding:18px 20px 10px; display:flex; justify-content:space-between; align-items:center; }
   .sheet-head h3 { font-size:17px; display:flex; align-items:center; gap:9px; }
-  .sheet-head h3 svg { width:19px; height:19px; color:var(--blue); }
-  .sheet-head button { background:var(--card); border:1px solid var(--border); color:var(--txt2); width:32px; height:32px; border-radius:50%; cursor:pointer; }
+  .sheet-head h3 .ms { font-size:21px; color:var(--blue); }
+  .sheet-head button { background:var(--card); border:1px solid var(--border); color:var(--txt2); width:32px; height:32px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; }
   .srv-list { overflow-y:auto; padding:4px 14px 26px; }
-  .srv { display:flex; align-items:center; gap:14px; padding:13px 12px; border-radius:14px; cursor:pointer; }
+  .srv { display:flex; align-items:center; gap:14px; padding:12px; border-radius:14px; cursor:pointer; }
   .srv:active { background:var(--card); }
-  .srv .f { width:40px; height:40px; border-radius:50%; background:var(--card); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .srv .f svg { width:20px; height:20px; color:var(--txt2); }
+  .srv .f { font-size:24px; width:40px; text-align:center; }
   .srv .n { flex:1; }
   .srv .n b { font-size:14.5px; display:block; }
   .srv .n small { color:var(--txt2); font-size:11.5px; }
-  .srv .bars { font-size:12px; }
-  .srv .chk { color:var(--green); }
+  .srv .chk { color:var(--green); font-size:20px !important; }
 
   /* ===== PAGES ===== */
   .panel { display:none; }
   .panel.on { display:block; }
   .sec-title { padding:20px 20px 10px; font-size:16px; font-weight:800; display:flex; align-items:center; gap:9px; }
-  .sec-title svg { width:19px; height:19px; color:var(--blue); }
+  .sec-title .ms { font-size:22px; color:var(--blue); }
   .feat { display:flex; gap:14px; background:var(--card); border:1px solid var(--border); border-radius:16px; padding:16px; margin:0 20px 10px; align-items:flex-start; }
-  .feat .ico { width:40px; height:40px; border-radius:12px; background:rgba(79,140,255,.1); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .feat .ico svg { width:21px; height:21px; color:var(--blue); }
+  .feat .ico { width:42px; height:42px; border-radius:13px; background:rgba(79,140,255,.1); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .feat .ico .ms { font-size:22px; color:var(--blue); }
   .feat b { font-size:14px; display:block; margin-bottom:3px; }
   .feat small { font-size:12px; color:var(--txt2); line-height:1.55; display:block; }
   .p-btn { width:100%; margin-top:14px; padding:13px; border:none; border-radius:13px; background:linear-gradient(90deg,var(--blue),var(--blue2)); color:#fff; font-weight:800; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; }
-  .p-btn svg { width:16px; height:16px; }
+  .p-btn .ms { font-size:18px; }
   .p-out { margin-top:12px; font-size:13px; line-height:1.7; }
   .ping-row { display:flex; justify-content:space-between; padding:7px 2px; border-bottom:1px solid var(--border); font-size:13.5px; align-items:center; }
   select, .feat input { width:100%; padding:12px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--txt); font-size:14px; margin-top:10px; }
 
-  /* ===== TAB BAR ===== */
+  /* ===== TABS ===== */
   .tabbar { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:rgba(17,23,48,.97); backdrop-filter:blur(14px); border-top:1px solid var(--border); display:flex; justify-content:space-around; padding:10px 8px calc(12px + env(safe-area-inset-bottom)); z-index:40; }
   .tab { display:flex; flex-direction:column; align-items:center; gap:4px; background:none; border:none; color:var(--txt2); font-size:10.5px; font-weight:600; cursor:pointer; padding:2px 14px; }
-  .tab svg { width:23px; height:23px; }
+  .tab .ms { font-size:24px; }
   .tab.on { color:var(--blue); }
+  .tab.on .ms { font-variation-settings:'FILL' 1,'wght' 500; }
 
   .toast { position:fixed; bottom:110px; left:50%; transform:translateX(-50%) translateY(20px); background:#1d2a5c; border:1px solid var(--blue); color:#fff; padding:12px 22px; border-radius:30px; font-size:13.5px; font-weight:600; opacity:0; transition:.3s; z-index:70; pointer-events:none; white-space:nowrap; }
   .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
   .ver { text-align:center; color:var(--txt2); font-size:11px; padding:14px 0 6px; }
 
-  /* ===== MODAL ===== */
   #installModal { display:none; position:fixed; inset:0; background:rgba(0,0,10,.85); z-index:80; align-items:center; justify-content:center; padding:20px; }
   #installModal > div { background:var(--bg2); border:2px solid var(--blue); border-radius:22px; max-width:480px; width:100%; padding:30px 24px; text-align:center; max-height:90vh; overflow-y:auto; }
   #im-ico { width:58px; height:58px; margin:0 auto; border-radius:16px; background:rgba(79,140,255,.12); display:flex; align-items:center; justify-content:center; }
-  #im-ico svg { width:30px; height:30px; color:var(--blue); }
+  #im-ico .ms { font-size:32px; color:var(--blue); }
 </style>
 </head>
 <body>
-
-<!-- ====== SPRITE SVG ====== -->
-<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
-  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2L4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z"/></symbol>
-  <symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M12 2L4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z"/><path d="M9 12l2 2 4-4" stroke-width="2.2"/></symbol>
-  <symbol id="i-power" viewBox="0 0 24 24"><path d="M12 2v9"/><path d="M18.4 6.6a9 9 0 1 1-12.8 0"/></symbol>
-  <symbol id="i-gamepad" viewBox="0 0 24 24"><path d="M6 12h4m-2-2v4m7-3h.01M18 10h.01M17.3 5H6.7a4.7 4.7 0 0 0-4.6 5.6l1 5.4a2.4 2.4 0 0 0 4.1 1.1L9.5 15h5l2.3 2.1a2.4 2.4 0 0 0 4.1-1.1l1-5.4A4.7 4.7 0 0 0 17.3 5z"/></symbol>
-  <symbol id="i-bomb" viewBox="0 0 24 24"><circle cx="10" cy="14" r="7"/><path d="M14.5 9.5L17 7m0 0l1.5-1.5M17 7l2 2M19.5 4.5L21 6"/></symbol>
-  <symbol id="i-adblock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></symbol>
-  <symbol id="i-tools" viewBox="0 0 24 24"><path d="M14.7 6.3a4.5 4.5 0 0 0-6 5.6L3 17.6V21h3.4l5.7-5.7a4.5 4.5 0 0 0 5.6-6L14.5 12l-2.5-2.5 2.7-3.2z"/></symbol>
-  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14.5 14.5 0 0 1 0 18 14.5 14.5 0 0 1 0-18z"/></symbol>
-  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16"/></symbol>
-  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 21V9m0 0l-4 4m4-4l4 4M4 5h16"/></symbol>
-  <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M12 15l4-6"/><path d="M4 15a8 8 0 1 1 16 0"/></symbol>
-  <symbol id="i-server" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/></symbol>
-  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
-  <symbol id="i-nologs" viewBox="0 0 24 24"><path d="M6 3h9l5 5v13H6z"/><path d="M15 3v5h5M9 13h6M9 17h4"/><path d="M4 4l16 16" stroke="var(--red)"/></symbol>
-  <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M3 3l18 18M10.5 10.7a2.5 2.5 0 0 0 3.4 3.4M9 5.2A9.8 9.8 0 0 1 12 4.8c5 0 9 4.2 10 7.2-.4 1.2-1.3 2.6-2.6 3.9M6.1 6.1C4.1 7.5 2.7 9.5 2 12c1 3 5 7.2 10 7.2 1.5 0 2.9-.4 4.2-1"/></symbol>
-  <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M2.5 9a15 15 0 0 1 19 0M5.5 12.5a10.5 10.5 0 0 1 13 0M8.5 16a6 6 0 0 1 7 0"/><circle cx="12" cy="19" r="1" fill="currentColor"/></symbol>
-  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 9a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"/><path d="M10 20a2 2 0 0 0 4 0"/></symbol>
-  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 3v6h-6"/></symbol>
-  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></symbol>
-  <symbol id="i-share" viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="5.5" r="2.5"/><circle cx="18" cy="18.5" r="2.5"/><path d="M8.2 10.8l7.6-4M8.2 13.2l7.6 4"/></symbol>
-  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></symbol>
-  <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M9 21h6m-3-4v4"/></symbol>
-  <symbol id="i-apple" viewBox="0 0 24 24"><path d="M16.5 12.9c0-2.4 2-3.5 2.1-3.6-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.86-1.6 0-3.1 1-4 2.4-1.7 3-.4 7.4 1.2 9.8.8 1.2 1.8 2.5 3.1 2.4 1.2 0 1.7-.8 3.2-.8s1.9.8 3.2.8c1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8-.1 0-2.6-1-2.7-3.9zM14 5.6c.7-.8 1.1-2 1-3.1-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1 3 1.1.1 2.2-.6 2.9-1.4z"/></symbol>
-  <symbol id="i-android" viewBox="0 0 24 24"><path d="M5 10a7 7 0 0 1 14 0v8a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 18v-8z"/><path d="M8.5 5.5L7 3.5M15.5 5.5L17 3.5M9.5 13.5h.01M14.5 13.5h.01"/></symbol>
-  <symbol id="i-window" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 9v12"/></symbol>
-  <symbol id="i-rocket" viewBox="0 0 24 24"><path d="M12 15c-2-1-3-3-3-6 0-3.5 3-7 3-7s3 3.5 3 7c0 3-1 5-3 6z"/><path d="M9 12l-3 2v3l3-1m6-4l3 2v3l-3-1M12 15v4"/></symbol>
-  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></symbol>
-  <symbol id="i-broom" viewBox="0 0 24 24"><path d="M19 3l-7 7M12.5 8.5L10 6l-6 6c-1 1-1.5 3.5-1.5 6 2.5 0 5-.5 6-1.5l6-6-2.5-2.5z"/><path d="M9 15l-1.5-1.5"/></symbol>
-  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4m0 1h12l-2.5 4L17 13H5"/></symbol>
-  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21S4 14.5 4 9a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 9c0 5.5-8 12-8 12z"/></symbol>
-  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></symbol>
-  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
-  <symbol id="i-chevron-d" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
-  <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
-</svg>
-
 <div class="app">
 
-  <!-- ============ HOME (VPN) ============ -->
+  <!-- HOME -->
   <div class="panel on" id="page-home">
     <header>
-      <div class="logo">
-        <svg class="shield" viewBox="0 0 24 24"><defs><linearGradient id="gsh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5f9aff"/><stop offset="1" stop-color="#2b5fd9"/></linearGradient></defs><path d="M12 2L4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z" fill="url(#gsh)"/><path d="M9.2 11.8l2 2 3.8-4" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        VPN-<span>Pro</span>
-      </div>
+      <div class="logo"><span class="ms fill">shield</span>VPN-<span>Pro</span></div>
       <div class="pro-badge">GRATIS</div>
     </header>
 
     <div class="status-row">
       <div class="chip"><span class="dot" id="dot"></span><span id="statusTxt">Desprotegido</span></div>
-      <div class="chip"><svg class="ic" style="color:var(--blue)"><use href="#i-bolt"/></svg>WireGuard</div>
+      <div class="chip"><span class="ms">bolt</span>WireGuard</div>
     </div>
 
     <div class="connect-area">
-      <div class="ip-line"><svg class="ic" style="width:14px;height:14px"><use href="#i-globe"/></svg>Tu IP: <b id="ipTxt">oculta</b></div>
+      <div class="ip-line"><span class="ms">public</span>Tu IP: <b id="ipTxt">oculta</b></div>
       <div class="timer" id="timer">00:00:00</div>
       <button class="bigbtn" id="bigBtn" onclick="toggleVPN()">
         <div class="ring"></div>
-        <svg class="power" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 2v9"/><path d="M18.4 6.6a9 9 0 1 1-12.8 0"/></svg>
+        <span class="ms power">power_settings_new</span>
         <div class="state" id="stateTxt">TOCA PARA<br>CONECTAR</div>
         <div class="sub" id="stateSub">Conexión segura en 1 toque</div>
       </button>
     </div>
 
     <div class="speeds">
-      <div class="speed-box">
-        <div class="lbl"><svg class="ic"><use href="#i-download"/></svg>Descarga</div>
-        <div class="val"><span id="dlVal">0.0</span> <span class="unit">Mbps</span></div>
-      </div>
-      <div class="speed-box">
-        <div class="lbl"><svg class="ic"><use href="#i-upload"/></svg>Subida</div>
-        <div class="val"><span id="ulVal">0.0</span> <span class="unit">Mbps</span></div>
-      </div>
-      <div class="speed-box">
-        <div class="lbl"><svg class="ic"><use href="#i-gauge"/></svg>Ping</div>
-        <div class="val"><span id="pgVal">--</span> <span class="unit">ms</span></div>
-      </div>
+      <div class="speed-box"><div class="lbl"><span class="ms">download</span>Descarga</div><div class="val"><span id="dlVal">0.0</span> <span class="unit">Mbps</span></div></div>
+      <div class="speed-box"><div class="lbl"><span class="ms">upload</span>Subida</div><div class="val"><span id="ulVal">0.0</span> <span class="unit">Mbps</span></div></div>
+      <div class="speed-box"><div class="lbl"><span class="ms">speed</span>Ping</div><div class="val"><span id="pgVal">--</span> <span class="unit">ms</span></div></div>
     </div>
 
     <div class="server-card">
       <button class="server-btn" onclick="openSheet()">
-        <span class="flagbox"><svg><use href="#i-server"/></svg></span>
+        <span class="flagbox"><span class="ms">dns</span></span>
         <span class="server-info">
           <span class="lbl">SERVIDOR</span>
-          <span class="name" id="curName">Estados Unidos — Rápido</span>
+          <span class="name" id="curName">Estados Unidos — Nueva York</span>
           <span class="load" id="curLoad">Carga: 12% · Excelente</span>
         </span>
-        <svg class="chev" width="18" height="18"><use href="#i-chevron-d"/></svg>
+        <span class="ms chev">expand_more</span>
       </button>
     </div>
 
     <div class="quick">
-      <div class="q" onclick="goPage('turbo', document.querySelectorAll('.tab')[1])"><div class="ico"><svg><use href="#i-gamepad"/></svg></div><div class="t">Game<br>Turbo</div></div>
-      <div class="q" id="qKill" onclick="toggleKill()"><div class="ico"><svg><use href="#i-bomb"/></svg></div><div class="t">Kill<br>Switch</div></div>
-      <div class="q" id="qAd" onclick="toggleAd()"><div class="ico"><svg><use href="#i-adblock"/></svg></div><div class="t">Anti<br>Anuncios</div></div>
-      <div class="q" onclick="openInstall('windows')"><div class="ico"><svg><use href="#i-monitor"/></svg></div><div class="t">Instalar<br>App</div></div>
+      <div class="q" onclick="goPage('turbo', document.querySelectorAll('.tab')[1])"><span class="ms">sports_esports</span><div class="t">Game<br>Turbo</div></div>
+      <div class="q" id="qKill" onclick="toggleKill()"><span class="ms">gpp_maybe</span><div class="t">Kill<br>Switch</div></div>
+      <div class="q" id="qAd" onclick="toggleAd()"><span class="ms">block</span><div class="t">Anti<br>Anuncios</div></div>
+      <div class="q" onclick="openInstall('windows')"><span class="ms">install_desktop</span><div class="t">Instalar<br>App</div></div>
     </div>
-    <div class="ver">VPN-Pro v2.1 · Actualización automática activa</div>
+    <div class="ver">VPN-Pro v2.2 · Actualización automática activa</div>
   </div>
 
-  <!-- ============ TURBO ============ -->
+  <!-- TURBO -->
   <div class="panel" id="page-turbo">
-    <div class="sec-title"><svg><use href="#i-gamepad"/></svg>Game Turbo</div>
+    <div class="sec-title"><span class="ms">sports_esports</span>Game Turbo</div>
     <div class="feat">
-      <div class="ico"><svg><use href="#i-rocket"/></svg></div>
+      <div class="ico"><span class="ms">rocket_launch</span></div>
       <div style="flex:1"><b>Booster de Ping</b><small>Mide tu ping real a los servidores de tus juegos.</small>
-      <button class="p-btn" onclick="runPingTest()"><svg><use href="#i-bolt"/></svg>Medir ping ahora</button>
+      <button class="p-btn" onclick="runPingTest()"><span class="ms">bolt</span>Medir ping ahora</button>
       <div class="p-out" id="ping-results"></div></div>
     </div>
     <div class="feat">
-      <div class="ico"><svg><use href="#i-target"/></svg></div>
+      <div class="ico"><span class="ms">my_location</span></div>
       <div style="flex:1"><b>Sensibilidad Pro</b><small>Configs de pros para máxima precisión (legal).</small>
       <select id="game-select">
         <option value="ff">Free Fire</option><option value="fortnite">Fortnite</option>
         <option value="warzone">Warzone / COD</option><option value="pubg">PUBG Mobile</option>
         <option value="roblox">Roblox</option><option value="mlbb">Mobile Legends</option>
       </select>
-      <button class="p-btn" onclick="showSens()"><svg><use href="#i-target"/></svg>Ver configuración</button>
+      <button class="p-btn" onclick="showSens()"><span class="ms">my_location</span>Ver configuración</button>
       <div class="p-out" id="sens-results"></div></div>
     </div>
     <div class="feat">
-      <div class="ico"><svg><use href="#i-broom"/></svg></div>
+      <div class="ico"><span class="ms">cleaning_services</span></div>
       <div style="flex:1"><b>Limpiador de RAM</b><small>Libera memoria y caché antes de jugar.</small>
-      <button class="p-btn" onclick="cleanRAM()"><svg><use href="#i-broom"/></svg>Optimizar dispositivo</button>
+      <button class="p-btn" onclick="cleanRAM()"><span class="ms">cleaning_services</span>Optimizar dispositivo</button>
       <div class="p-out" id="ram-results"></div></div>
     </div>
     <div class="feat">
-      <div class="ico"><svg><use href="#i-flag"/></svg></div>
+      <div class="ico"><span class="ms">sports_score</span></div>
       <div style="flex:1"><b>Mis Juegos</b><small>Lanza tus juegos con el booster activo.</small>
       <div style="display:flex; gap:8px; margin-top:10px;">
         <input id="game-input" placeholder="Nombre del juego" style="margin-top:0;">
@@ -278,47 +231,47 @@
     </div>
   </div>
 
-  <!-- ============ PROTECCIÓN ============ -->
+  <!-- PROTECCIÓN -->
   <div class="panel" id="page-prot">
-    <div class="sec-title"><svg><use href="#i-shield-check"/></svg>Protección</div>
-    <div class="feat"><div class="ico"><svg><use href="#i-lock"/></svg></div><div><b>Cifrado AES-256</b><small>Tu tráfico es ilegible para tu proveedor o cualquier espía.</small></div></div>
-    <div class="feat"><div class="ico"><svg><use href="#i-nologs"/></svg></div><div><b>Política No-Logs</b><small>No registramos actividad, IP ni historial.</small></div></div>
-    <div class="feat"><div class="ico"><svg><use href="#i-bomb"/></svg></div><div><b>Kill Switch</b><small id="killState">Desactivado — actívalo desde Inicio.</small></div></div>
-    <div class="feat"><div class="ico"><svg><use href="#i-adblock"/></svg></div><div><b>Bloqueo de anuncios</b><small id="adState">Desactivado — actívalo desde Inicio.</small></div></div>
-    <div class="feat"><div class="ico"><svg><use href="#i-eye-off"/></svg></div><div><b>Navegación anónima</b><small>Tu IP real queda oculta tras la del servidor.</small></div></div>
-    <div class="feat"><div class="ico"><svg><use href="#i-wifi"/></svg></div><div><b>WiFi público seguro</b><small>Cifra todo en redes abiertas contra ataques.</small></div></div>
+    <div class="sec-title"><span class="ms">verified_user</span>Protección</div>
+    <div class="feat"><div class="ico"><span class="ms">lock</span></div><div><b>Cifrado AES-256</b><small>Tu tráfico es ilegible para tu proveedor o cualquier espía.</small></div></div>
+    <div class="feat"><div class="ico"><span class="ms">history_off</span></div><div><b>Política No-Logs</b><small>No registramos actividad, IP ni historial.</small></div></div>
+    <div class="feat"><div class="ico"><span class="ms">gpp_maybe</span></div><div><b>Kill Switch</b><small id="killState">Desactivado — actívalo desde Inicio.</small></div></div>
+    <div class="feat"><div class="ico"><span class="ms">block</span></div><div><b>Bloqueo de anuncios</b><small id="adState">Desactivado — actívalo desde Inicio.</small></div></div>
+    <div class="feat"><div class="ico"><span class="ms">visibility_off</span></div><div><b>Navegación anónima</b><small>Tu IP real queda oculta tras la del servidor.</small></div></div>
+    <div class="feat"><div class="ico"><span class="ms">wifi</span></div><div><b>WiFi público seguro</b><small>Cifra todo en redes abiertas contra ataques.</small></div></div>
   </div>
 
-  <!-- ============ AJUSTES ============ -->
+  <!-- AJUSTES -->
   <div class="panel" id="page-set">
-    <div class="sec-title"><svg><use href="#i-tools"/></svg>Ajustes</div>
-    <div class="feat"><div class="ico"><svg><use href="#i-bell"/></svg></div><div><b>Notificaciones</b><small>Alertas en tiempo real. <a style="color:var(--blue)" onclick="askNotifyPermission()">Activar</a></small></div></div>
-    <div class="feat"><div class="ico"><svg><use href="#i-refresh"/></svg></div><div><b>Auto-actualización</b><small>La app se actualiza sola, sin reinstalar.</small></div></div>
-    <div class="feat"><div class="ico"><svg><use href="#i-bolt"/></svg></div><div><b>Protocolo</b><small>WireGuard® — el más rápido y seguro, 4× más veloz que OpenVPN.</small></div></div>
-    <div class="feat" style="cursor:pointer" onclick="shareApp()"><div class="ico"><svg><use href="#i-share"/></svg></div><div><b>Compartir VPN-Pro</b><small>Invita a tus amigos — es gratis para todos.</small></div></div>
+    <div class="sec-title"><span class="ms">settings</span>Ajustes</div>
+    <div class="feat"><div class="ico"><span class="ms">notifications</span></div><div><b>Notificaciones</b><small>Alertas en tiempo real. <a style="color:var(--blue)" onclick="askNotifyPermission()">Activar</a></small></div></div>
+    <div class="feat"><div class="ico"><span class="ms">system_update_alt</span></div><div><b>Auto-actualización</b><small>La app se actualiza sola, sin reinstalar.</small></div></div>
+    <div class="feat"><div class="ico"><span class="ms">bolt</span></div><div><b>Protocolo</b><small>WireGuard® — el más rápido y seguro, 4× más veloz que OpenVPN.</small></div></div>
+    <div class="feat" style="cursor:pointer" onclick="shareApp()"><div class="ico"><span class="ms">share</span></div><div><b>Compartir VPN-Pro</b><small>Invita a tus amigos — es gratis para todos.</small></div></div>
     <div class="ver" style="padding-top:20px;">Hecho con 💙 — VPN-Pro</div>
   </div>
 
-  <!-- ============ TAB BAR ============ -->
+  <!-- TABS -->
   <nav class="tabbar">
-    <button class="tab on" data-p="home" onclick="goPage('home',this)"><svg><use href="#i-shield"/></svg>VPN</button>
-    <button class="tab" data-p="turbo" onclick="goPage('turbo',this)"><svg><use href="#i-gamepad"/></svg>Turbo</button>
-    <button class="tab" data-p="prot" onclick="goPage('prot',this)"><svg><use href="#i-lock"/></svg>Protección</button>
-    <button class="tab" data-p="set" onclick="goPage('set',this)"><svg><use href="#i-tools"/></svg>Ajustes</button>
+    <button class="tab on" data-p="home" onclick="goPage('home',this)"><span class="ms">shield</span>VPN</button>
+    <button class="tab" data-p="turbo" onclick="goPage('turbo',this)"><span class="ms">sports_esports</span>Turbo</button>
+    <button class="tab" data-p="prot" onclick="goPage('prot',this)"><span class="ms">lock</span>Protección</button>
+    <button class="tab" data-p="set" onclick="goPage('set',this)"><span class="ms">settings</span>Ajustes</button>
   </nav>
 </div>
 
-<!-- ===== SHEET SERVIDORES ===== -->
+<!-- SHEET -->
 <div class="sheet-bg" id="sheetBg" onclick="closeSheet()"></div>
 <div class="sheet" id="sheet">
-  <div class="sheet-head"><h3><svg><use href="#i-globe"/></svg>Elegir servidor</h3><button onclick="closeSheet()"><svg width="14" height="14"><use href="#i-x"/></svg></button></div>
+  <div class="sheet-head"><h3><span class="ms">public</span>Elegir servidor</h3><button onclick="closeSheet()"><span class="ms" style="font-size:18px">close</span></button></div>
   <div class="srv-list" id="srvList"></div>
 </div>
 
-<!-- ===== MODAL INSTALACIÓN ===== -->
+<!-- MODAL -->
 <div id="installModal">
   <div>
-    <div id="im-ico"><svg id="im-ico-use"><use href="#i-android"/></svg></div>
+    <div id="im-ico"><span class="ms" id="im-ico-ms">android</span></div>
     <h3 id="im-title" style="font-size:21px; margin:12px 0 4px;">Instalar</h3>
     <div id="im-steps" style="text-align:left; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; font-size:13.5px; line-height:1.9; margin-top:14px;"></div>
     <div id="im-action" style="margin-top:20px;"></div>
@@ -380,10 +333,10 @@ let curServer=SERVERS[0];
 function renderServers(){
   $('srvList').innerHTML=SERVERS.map((s,i)=>`
     <div class="srv" onclick="pickServer(${i})">
-      <span class="f" style="font-size:20px">${s.flag}</span>
+      <span class="f">${s.flag}</span>
       <span class="n"><b>${s.name}</b><small>${s.city} · ${s.ping} ms</small></span>
-      <span class="bars">${s.load<25?'🟢':s.load<45?'🟡':'🔴'}</span>
-      ${s===curServer?'<svg class="chk" width="18" height="18"><use href="#i-check"/></svg>':''}
+      <span style="font-size:11px">${s.load<25?'🟢':s.load<45?'🟡':'🔴'}</span>
+      ${s===curServer?'<span class="ms chk">check_circle</span>':''}
     </div>`).join('');
 }
 function pickServer(i){
@@ -459,12 +412,12 @@ function addGame(){ const v=$('game-input').value.trim(); if(!v)return; myGames.
 renderGames();
 
 const INSTALL_DATA={
-  android:{ico:'i-android',title:'Instalar en Android',steps:['1. Toca "Instalar App"','2. Acepta cuando Chrome pregunte','3. VPN-Pro queda como app'],action:'<button class="p-btn" onclick="pwaInstall()">Instalar App</button>'},
-  ios:{ico:'i-apple',title:'Instalar en iPhone / iPad',steps:['1. Abre esta página en Safari','2. Compartir → "Agregar a pantalla de inicio"','3. Toca "Agregar"'],action:''},
-  windows:{ico:'i-window',title:'Instalar en Windows',steps:['1. Toca "Instalar App"','2. VPN-Pro se instala con su propio ícono','3. Encuéntralo en el escritorio'],action:'<button class="p-btn" onclick="pwaInstall()">Instalar App</button>'},
-  mac:{ico:'i-monitor',title:'Instalar en Mac',steps:['1. Safari → Archivo → "Agregar al Dock"','2. O Chrome → icono ⊕ → Instalar'],action:''}
+  android:{ico:'android',title:'Instalar en Android',steps:['1. Toca "Instalar App"','2. Acepta cuando Chrome pregunte','3. VPN-Pro queda como app'],action:'<button class="p-btn" onclick="pwaInstall()"><span class="ms">download</span>Instalar App</button>'},
+  ios:{ico:'phone_iphone',title:'Instalar en iPhone / iPad',steps:['1. Abre esta página en Safari','2. Compartir → "Agregar a pantalla de inicio"','3. Toca "Agregar"'],action:''},
+  windows:{ico:'desktop_windows',title:'Instalar en Windows',steps:['1. Toca "Instalar App"','2. VPN-Pro se instala con su propio ícono','3. Encuéntralo en el escritorio'],action:'<button class="p-btn" onclick="pwaInstall()"><span class="ms">download</span>Instalar App</button>'},
+  mac:{ico:'laptop_mac',title:'Instalar en Mac',steps:['1. Safari → Archivo → "Agregar al Dock"','2. O Chrome → icono ⊕ → Instalar'],action:''}
 };
-function openInstall(d){ const x=INSTALL_DATA[d]; $('im-ico-use').innerHTML='<use href="#'+x.ico+'"/>'; $('im-title').textContent=x.title; $('im-steps').innerHTML=x.steps.map(s=>'<div>'+s+'</div>').join(''); $('im-action').innerHTML=x.action; $('installModal').style.display='flex'; }
+function openInstall(d){ const x=INSTALL_DATA[d]; $('im-ico-ms').textContent=x.ico; $('im-title').textContent=x.title; $('im-steps').innerHTML=x.steps.map(s=>'<div>'+s+'</div>').join(''); $('im-action').innerHTML=x.action; $('installModal').style.display='flex'; }
 function closeInstall(){ $('installModal').style.display='none'; }
 let deferred=null;
 window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); deferred=e; });
