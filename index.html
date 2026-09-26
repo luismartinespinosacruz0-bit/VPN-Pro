@@ -920,12 +920,14 @@ function openSupport(){
 }
 
 const INSTALL_DATA={
-  android:{ico:'android',title:'Instalar en Android',steps:['1. Toca "Instalar App"','2. Acepta cuando Chrome pregunte','3. VPN-Pro queda como app'],action:'<button class="p-btn" onclick="pwaInstall()"><span class="ms">download</span>Instalar App</button>'},
-  ios:{ico:'phone_iphone',title:'Instalar en iPhone / iPad',steps:['1. Abre esta página en Safari','2. Compartir → "Agregar a pantalla de inicio"','3. Toca "Agregar"'],action:''},
-  windows:{ico:'desktop_windows',title:'Instalar en Windows',steps:['1. Toca "Instalar App"','2. VPN-Pro se instala con su propio ícono','3. Encuéntralo en el escritorio'],action:'<button class="p-btn" onclick="pwaInstall()"><span class="ms">download</span>Instalar App</button>'},
-  mac:{ico:'laptop_mac',title:'Instalar en Mac',steps:['1. Safari → Archivo → "Agregar al Dock"','2. O Chrome → icono ⊕ → Instalar'],action:''}
+  android:{ico:'android',title:'Instalar en Android',steps:['1. Toca <b>"Instalar App"</b> abajo','2. Si no sale la ventana: mira la barra de Chrome arriba — toca el ícono <b>⊕ Instalar</b> que aparece al lado de la dirección','3. También funciona: menú ⋮ → <b>"Instalar aplicación"</b>','4. Acepta y el ícono queda en tu pantalla de inicio'],action:'<button class="p-btn" onclick="pwaInstall()"><span class="ms">download</span>Instalar App</button>'},
+  ios:{ico:'phone_iphone',title:'Instalar en iPhone / iPad',steps:['1. Abre esta página en <b>Safari</b> (no en Chrome de iPhone)','2. Toca el botón <b>Compartir</b> (el cuadrito con flecha ↑, abajo al centro)','3. Baja y toca <b>"Agregar a pantalla de inicio"</b>','4. Toca <b>"Agregar"</b> — listo, ícono en tu pantalla'],action:''},
+  windows:{ico:'desktop_windows',title:'Instalar en Windows',steps:['1. Toca <b>"Instalar App"</b> abajo','2. Si no sale la ventana: mira la <b>barra de direcciones</b> del navegador — hay un ícono de instalación (⊕ o monitor) al lado, hazle clic','3. También funciona: menú <b>⋯</b> (arriba derecha) → <b>"Aplicaciones" → "Instalar este sitio como aplicación"</b> (Edge) o <b>⋮ → "Instalar aplicación"</b> (Chrome)','4. VPN-Pro queda con ícono en escritorio y menú inicio'],action:'<button class="p-btn" onclick="pwaInstall()"><span class="ms">download</span>Instalar App</button>'},
+  mac:{ico:'laptop_mac',title:'Instalar en Mac',steps:['1. <b>Safari</b>: menú Archivo → <b>"Agregar al Dock"</b>','2. O <b>Chrome</b>: ícono ⊕ en la barra → Instalar'],action:''}
 };
 function openInstall(d){ const x=INSTALL_DATA[d]; $('im-ico-ms').textContent=x.ico; $('im-title').textContent=x.title; $('im-steps').innerHTML=x.steps.map(s=>'<div>'+s+'</div>').join(''); $('im-action').innerHTML=x.action; $('installModal').style.display='flex'; }
+// Cuando el instalador nativo por fin se habilita (a veces tarda), avisar al usuario que ya puede
+window.addEventListener('beforeinstallprompt',()=>{ setTimeout(()=>{ toast('✅ Instalador listo — dale a Instalar App'); },300); });
 function closeInstall(){ $('installModal').style.display='none'; }
 let deferred=null;
 window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); deferred=e; window._pwaReady=true; });
