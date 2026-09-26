@@ -410,6 +410,38 @@ function startInstallFromGate(){
   if(window._pwaReady && deferred){ pwaInstall(); return; }
   openInstall(d); // si no hay prompt nativo, mostrar instrucciones del dispositivo
 }
+/* DETECTOR DE NAVEGADOR INTERNO: si el usuario abrió el link desde TikTok, WhatsApp,
+   Instagram o Facebook, la instalación es IMPOSIBLE ahí — hay guiarlo a Chrome */
+(function(){
+  const ua=navigator.userAgent;
+  let from='';
+  if(/FBAN|FBAV|FB_IAB/i.test(ua)) from='Facebook';
+  else if(/Instagram/i.test(ua)) from='Instagram';
+  else if(/TikTok|musical_ly/i.test(ua)) from='TikTok';
+  else if(/WhatsApp/i.test(ua)) from='WhatsApp';
+  else if(/Snapchat/i.test(ua)) from='Snapchat';
+  if(!from) return;
+  window.addEventListener('DOMContentLoaded',()=>{
+    const d=window._device||detectDevice().type;
+    if(d!=='android' && d!=='ios') return;
+    const gate=document.querySelector('#webGate > div')||document.getElementById('webGate');
+    if(!gate) return;
+    const warn=document.createElement('div');
+    warn.style.cssText='background:rgba(245,197,24,.1); border:1.5px solid #f5c518; border-radius:16px; padding:16px 18px; max-width:340px; width:100%; margin-bottom:18px; text-align:center;';
+    warn.innerHTML=`
+      <div style="font-size:15px; font-weight:800; color:#f5c518;">⚠️ Estás viendo esto desde ${from}</div>
+      <div style="font-size:12.5px; color:var(--txt2); margin-top:6px; line-height:1.6;">Aquí no se puede instalar. <b style="color:var(--txt)">Copia el enlace y ábrelo en Chrome</b> — ahí sí funciona la instalación:</div>
+      <button class="p-btn" style="margin-top:12px; max-width:280px;" onclick="copyAndOpenChrome()"><span class="ms">content_copy</span>COPIAR ENLACE Y ABRIR CHROME</button>`;
+    gate.insertBefore(warn, gate.firstChild);
+  });
+})();
+function copyAndOpenChrome(){
+  const url='https://vpn-pro.netlify.app/';
+  navigator.clipboard?.writeText(url).catch(()=>{});
+  // Intenta abrir Chrome directamente (Android)
+  if(/Android/i.test(navigator.userAgent)){ location.href='intent://'+url.replace(/^https?:\/\//,'')+'#Intent;scheme=https;package=com.android.chrome;end'; }
+  else { toast('Enlace copiado — pégalo en Chrome'); }
+}
 function openGatePicker(){ $('gatePicker').style.display='flex'; }
 function gateInstall(d){ $('gatePicker').style.display='none'; if(deferred){ pwaInstall(); return; } openInstall(d); }
 // FLUJO DE INSTALACIÓN CORRECTO (como apps de verdad):
