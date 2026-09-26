@@ -279,6 +279,7 @@
     <div class="feat"><div class="ico"><span class="ms">system_update_alt</span></div><div><b>Auto-actualización</b><small>La app se actualiza sola, sin reinstalar.</small></div></div>
     <div class="feat"><div class="ico"><span class="ms">bolt</span></div><div><b>Protocolo</b><small>WireGuard® — el más rápido y seguro, 4× más veloz que OpenVPN.</small></div></div>
     <div class="feat" style="cursor:pointer" onclick="shareApp()"><div class="ico"><span class="ms">share</span></div><div><b>Compartir VPN-Pro</b><small>Invita a tus amigos — es gratis para todos.</small></div></div>
+    <div class="feat" style="cursor:pointer" onclick="openSupport()"><div class="ico"><span class="ms">favorite</span></div><div><b>Apoya el proyecto</b><small>Mira un anuncio de nuestros patrocinadores — cada vista ayuda a mantener VPN-Pro gratis. <span id="supportCount" style="color:var(--green)"></span></small></div></div>
     <div class="ver" style="padding-top:20px;">Hecho con 💙 — VPN-Pro</div>
   </div>
 
@@ -556,6 +557,26 @@ async function runLeakTest(){
   const score=vpnOn?100:(killOn&&adOn)?60:40;
   out.innerHTML=results.join('')+'<div style="text-align:center; margin-top:14px;"><div style="font-size:34px; font-weight:800; color:'+(score>=80?'var(--green)':score>=50?'var(--yellow)':'var(--red)')+'">'+score+'%</div><div style="color:var(--txt2); font-size:11.5px;">nivel de protección actual</div></div>';
   notif('Test de Fugas','Puntuación de protección: '+score+'%');
+}
+
+/* ===== MONETIZACIÓN: DIRECT LINK ADSTERRA ===== */
+/* Pega aquí tu Direct Link de Adsterra cuando te registres (formato: https://otieu.com/4/XXXXXXX)
+   Pasos: 1) adsterra.com → Sign Up como Publisher (aprueba en minutos, sin mínimo de tráfico)
+          2) Panel → Websites → Add → pone tu URL de GitHub Pages
+          3) Direct Link → copia el enlace y pégalo abajo */
+const ADSTERRA_DIRECT_LINK = 'PEGA_AQUI_TU_DIRECT_LINK';
+let supportViews=parseInt(localStorage.getItem('vpnpro_supports')||'0');
+function renderSupport(){ const el=$('supportCount'); if(el && supportViews>0) el.textContent='('+supportViews+' apoyos registrados)'; }
+renderSupport();
+function openSupport(){
+  if(ADSTERRA_DIRECT_LINK.startsWith('http')){
+    supportViews++; localStorage.setItem('vpnpro_supports',supportViews); renderSupport();
+    window.open(ADSTERRA_DIRECT_LINK,'_blank');
+    notif('💜 ¡Gracias!','Tu apoyo ayuda a mantener VPN-Pro gratis');
+  } else {
+    toast('Configura tu Direct Link de Adsterra en Ajustes');
+    alert('Para activar tu monetización:\n\n1. Regístrate gratis en adsterra.com como Publisher\n2. Agrega tu web: luismartinespinosacruz0-bit.github.io/VPN-Pro/\n3. Copia tu Direct Link (sección Direct Links)\n4. Pégalo en el código donde dice ADSTERRA_DIRECT_LINK\n\nAprobación: menos de 10 minutos. Pagan por PayPal, WebMoney, cripto (mínimo $5).');
+  }
 }
 
 const INSTALL_DATA={
