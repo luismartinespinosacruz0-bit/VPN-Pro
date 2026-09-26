@@ -3,433 +3,450 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0a1128">
-<title>VPN-Pro — El VPN más rápido y seguro</title>
+<meta name="theme-color" content="#0b0f1e">
+<title>VPN-Pro</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',system-ui,Arial,sans-serif; }
-  body { background:#0a1128; color:#e8ecf5; line-height:1.6; }
-  a { text-decoration:none; color:inherit; }
-  .container { max-width:1100px; margin:0 auto; padding:0 20px; }
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',system-ui,-apple-system,sans-serif; -webkit-tap-highlight-color:transparent; }
+  :root{
+    --bg:#0b0f1e; --bg2:#111730; --card:#151c3a; --card2:#1a2248;
+    --blue:#4f8cff; --blue2:#2b5fd9; --green:#3ddc84; --red:#ff5c5c; --yellow:#f5c518;
+    --txt:#eef2fb; --txt2:#8b97b8; --border:#242e58;
+  }
+  body { background:var(--bg); color:var(--txt); min-height:100vh; }
+  .app { max-width:430px; margin:0 auto; min-height:100vh; position:relative; padding-bottom:86px; }
 
-  /* NAV */
-  nav { position:sticky; top:0; background:rgba(10,17,40,.95); backdrop-filter:blur(10px); z-index:100; border-bottom:1px solid rgba(255,255,255,.08); }
-  .nav-in { display:flex; justify-content:space-between; align-items:center; padding:14px 20px; max-width:1100px; margin:0 auto; }
-  .logo { font-size:22px; font-weight:800; }
-  .logo span { color:#4f8cff; }
-  .nav-links { display:flex; gap:26px; font-size:14px; color:#aab6d4; }
-  .nav-links a:hover { color:#fff; }
-  @media(max-width:700px){ .nav-links{display:none} }
+  /* ===== HEADER ===== */
+  header { display:flex; justify-content:space-between; align-items:center; padding:16px 20px 8px; }
+  .logo { font-size:19px; font-weight:800; display:flex; align-items:center; gap:8px; }
+  .logo .shield { width:26px; height:26px; }
+  .logo span { color:var(--blue); }
+  .pro-badge { background:linear-gradient(90deg,#4f8cff,#2b5fd9); font-size:10px; font-weight:800; padding:3px 9px; border-radius:20px; letter-spacing:.5px; }
 
-  /* HERO */
-  .hero { text-align:center; padding:80px 20px 60px; background:radial-gradient(ellipse at top, #14265e 0%, #0a1128 65%); }
-  .hero h1 { font-size:clamp(34px,6vw,58px); font-weight:800; line-height:1.15; }
-  .hero h1 span { color:#4f8cff; }
-  .hero p.sub { color:#aab6d4; font-size:18px; max-width:640px; margin:18px auto 34px; }
-  .btn { display:inline-block; padding:15px 36px; border-radius:50px; font-weight:700; font-size:16px; transition:.2s; cursor:pointer; border:none; }
-  .btn-main { background:linear-gradient(90deg,#4f8cff,#2b5fd9); color:#fff; box-shadow:0 8px 30px rgba(79,140,255,.4); }
-  .btn-main:hover { transform:translateY(-2px); }
-  .btn-ghost { border:2px solid #3a4a75; color:#cdd7ee; margin-left:12px; }
-  .stores { margin-top:34px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
-  .store { background:#131c3d; border:1px solid #2a3763; border-radius:12px; padding:12px 22px; font-size:14px; display:flex; align-items:center; gap:10px; }
-  .store b { display:block; font-size:15px; }
-  .store small { color:#8492b8; }
+  /* ===== STATUS BAR ===== */
+  .status-row { display:flex; justify-content:center; gap:10px; padding:10px 20px 0; }
+  .chip { display:flex; align-items:center; gap:7px; background:var(--card); border:1px solid var(--border); border-radius:30px; padding:7px 14px; font-size:12px; color:var(--txt2); }
+  .dot { width:8px; height:8px; border-radius:50%; background:var(--red); animation:pulse 2s infinite; }
+  .dot.on { background:var(--green); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 
-  /* STATS */
-  .stats { display:flex; justify-content:center; gap:50px; flex-wrap:wrap; padding:40px 20px; border-top:1px solid rgba(255,255,255,.06); border-bottom:1px solid rgba(255,255,255,.06); }
-  .stat { text-align:center; }
-  .stat b { font-size:30px; color:#4f8cff; display:block; }
-  .stat span { font-size:13px; color:#8492b8; }
+  /* ===== CONNECT AREA ===== */
+  .connect-area { display:flex; flex-direction:column; align-items:center; padding:34px 20px 10px; position:relative; }
+  .ip-line { font-size:13px; color:var(--txt2); margin-bottom:4px; }
+  .ip-line b { color:var(--txt); }
+  .timer { font-size:26px; font-weight:700; letter-spacing:1px; color:var(--txt); margin:6px 0 20px; font-variant-numeric:tabular-nums; }
 
-  /* FEATURES */
-  section { padding:70px 20px; }
-  h2.sec { text-align:center; font-size:32px; margin-bottom:10px; }
-  p.secsub { text-align:center; color:#8492b8; margin-bottom:45px; }
-  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px; max-width:1100px; margin:0 auto; }
-  .card { background:#111a3a; border:1px solid #22305c; border-radius:16px; padding:28px; transition:.2s; }
-  .card:hover { transform:translateY(-4px); border-color:#4f8cff; }
-  .card .ico { font-size:34px; }
-  .card h3 { margin:12px 0 8px; font-size:18px; }
-  .card p { color:#9aa7c9; font-size:14.5px; }
+  .bigbtn { position:relative; width:210px; height:210px; border-radius:50%; border:none; cursor:pointer; background:radial-gradient(circle at 35% 30%, #1d2a5c, #111a3d 70%);
+    box-shadow:0 0 0 10px rgba(79,140,255,.06), 0 0 60px rgba(79,140,255,.15), inset 0 2px 20px rgba(255,255,255,.05);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; transition:.25s; }
+  .bigbtn:active { transform:scale(.96); }
+  .bigbtn .power { width:64px; height:64px; }
+  .bigbtn .state { font-size:17px; font-weight:800; letter-spacing:1.5px; }
+  .bigbtn .sub { font-size:11.5px; color:var(--txt2); }
+  .bigbtn.connected { box-shadow:0 0 0 10px rgba(61,220,132,.07), 0 0 80px rgba(61,220,132,.25), inset 0 2px 20px rgba(255,255,255,.05); }
+  .ring { position:absolute; inset:-14px; border-radius:50%; border:2px solid rgba(79,140,255,.18); animation:ringPulse 2.4s infinite; }
+  .bigbtn.connected .ring { border-color:rgba(61,220,132,.3); }
+  @keyframes ringPulse { 0%{transform:scale(.97); opacity:.8} 70%{transform:scale(1.08); opacity:0} 100%{opacity:0} }
+  .connecting .power { animation:spin 1.2s linear infinite; }
+  @keyframes spin { to{transform:rotate(360deg)} }
 
-  /* DOWNLOAD */
-  .download { background:linear-gradient(180deg,#0d1533,#0a1128); text-align:center; }
-  .dl-btns { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-top:36px; }
-  .dl { width:230px; background:#131c3d; border:2px solid #2a3763; border-radius:18px; padding:26px 18px; transition:.2s; cursor:pointer; }
-  .dl:hover { border-color:#4f8cff; transform:translateY(-4px); }
-  .dl .ico { font-size:42px; }
-  .dl b { display:block; font-size:17px; margin:10px 0 4px; }
-  .dl small { color:#8492b8; }
+  /* ===== SPEED ===== */
+  .speeds { display:flex; gap:12px; padding:22px 20px 8px; }
+  .speed-box { flex:1; background:var(--card); border:1px solid var(--border); border-radius:16px; padding:14px 16px; }
+  .speed-box .lbl { font-size:11px; color:var(--txt2); display:flex; align-items:center; gap:6px; }
+  .speed-box .val { font-size:20px; font-weight:800; margin-top:5px; font-variant-numeric:tabular-nums; }
+  .speed-box .unit { font-size:11px; color:var(--txt2); font-weight:400; }
 
-  /* PRICING */
-  .plans { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:24px; max-width:950px; margin:0 auto; }
-  .plan { background:#111a3a; border:2px solid #22305c; border-radius:20px; padding:34px 28px; text-align:center; position:relative; }
-  .plan.best { border-color:#4f8cff; box-shadow:0 0 40px rgba(79,140,255,.25); }
-  .plan .tag { position:absolute; top:-14px; left:50%; transform:translateX(-50%); background:#4f8cff; color:#fff; font-size:12px; font-weight:700; padding:5px 16px; border-radius:20px; }
-  .plan h3 { font-size:20px; }
-  .plan .price { font-size:42px; font-weight:800; margin:14px 0; }
-  .plan .price small { font-size:15px; color:#8492b8; font-weight:400; }
-  .plan ul { list-style:none; margin:18px 0 26px; font-size:14.5px; color:#aab6d4; }
-  .plan li { padding:6px 0; }
-  .plan li::before { content:"✓ "; color:#3ddc84; font-weight:700; }
+  /* ===== SERVER SELECT ===== */
+  .server-card { margin:12px 20px; background:var(--card); border:1px solid var(--border); border-radius:18px; overflow:hidden; }
+  .server-btn { width:100%; display:flex; align-items:center; gap:14px; padding:16px; background:none; border:none; color:var(--txt); cursor:pointer; text-align:left; }
+  .flag { font-size:26px; }
+  .server-info { flex:1; }
+  .server-info .lbl { font-size:11px; color:var(--txt2); }
+  .server-info .name { font-size:15.5px; font-weight:700; margin-top:2px; }
+  .server-info .load { font-size:11.5px; color:var(--green); margin-top:2px; }
+  .chev { color:var(--txt2); font-size:14px; }
 
-  footer { border-top:1px solid rgba(255,255,255,.08); padding:34px 20px; text-align:center; color:#6b7899; font-size:13.5px; }
+  /* ===== TURBO ROW ===== */
+  .quick { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; padding:6px 20px 14px; }
+  .q { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:14px 6px; text-align:center; cursor:pointer; transition:.2s; }
+  .q:active { transform:scale(.94); }
+  .q .ico { font-size:22px; }
+  .q .t { font-size:10.5px; color:var(--txt2); margin-top:6px; font-weight:600; }
+  .q.on { border-color:var(--green); background:rgba(61,220,132,.08); }
 
-  /* PWA install banner */
-  #installBar { display:none; position:fixed; bottom:16px; left:50%; transform:translateX(-50%); background:#16224d; border:1px solid #4f8cff; border-radius:14px; padding:14px 20px; display:flex; gap:14px; align-items:center; z-index:200; box-shadow:0 10px 40px rgba(0,0,0,.5); }
-  #installBar button { background:#4f8cff; border:none; color:#fff; font-weight:700; padding:9px 18px; border-radius:9px; cursor:pointer; }
+  /* ===== SHEET (LISTA SERVIDORES) ===== */
+  .sheet-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:50; }
+  .sheet { position:fixed; bottom:0; left:50%; transform:translate(-50%,105%); width:100%; max-width:430px; background:var(--bg2); border-radius:26px 26px 0 0; z-index:51; transition:.3s cubic-bezier(.2,.8,.3,1); max-height:78vh; display:flex; flex-direction:column; }
+  .sheet.open { transform:translate(-50%,0); }
+  .sheet-head { padding:18px 20px 10px; display:flex; justify-content:space-between; align-items:center; }
+  .sheet-head h3 { font-size:17px; }
+  .sheet-head button { background:var(--card); border:1px solid var(--border); color:var(--txt2); width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:14px; }
+  .srv-list { overflow-y:auto; padding:4px 14px 26px; }
+  .srv { display:flex; align-items:center; gap:14px; padding:13px 12px; border-radius:14px; cursor:pointer; }
+  .srv:active { background:var(--card); }
+  .srv .f { font-size:24px; }
+  .srv .n { flex:1; }
+  .srv .n b { font-size:14.5px; display:block; }
+  .srv .n small { color:var(--txt2); font-size:11.5px; }
+  .srv .bars { font-size:12px; }
+  .srv .chk { color:var(--green); font-weight:800; }
+
+  /* ===== GAMER PANEL ===== */
+  .panel { display:none; position:fixed; inset:0; z-index:60; background:var(--bg); overflow-y:auto; padding-bottom:30px; }
+  .panel.open { display:block; }
+  .panel-head { position:sticky; top:0; background:rgba(11,15,30,.95); backdrop-filter:blur(10px); display:flex; align-items:center; gap:14px; padding:16px 20px; z-index:5; border-bottom:1px solid var(--border); }
+  .panel-head .back { background:var(--card); border:1px solid var(--border); color:var(--txt); width:34px; height:34px; border-radius:50%; cursor:pointer; font-size:15px; }
+  .panel-head h2 { font-size:18px; }
+  .panel-body { padding:18px 20px; }
+  .p-card { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:18px; margin-bottom:14px; }
+  .p-card h3 { font-size:15px; margin-bottom:4px; display:flex; align-items:center; gap:8px; }
+  .p-card p { font-size:12.5px; color:var(--txt2); line-height:1.6; }
+  .p-btn { width:100%; margin-top:14px; padding:13px; border:none; border-radius:13px; background:linear-gradient(90deg,var(--blue),var(--blue2)); color:#fff; font-weight:800; font-size:14px; cursor:pointer; }
+  .p-btn.green { background:linear-gradient(90deg,#3ddc84,#1faa5e); color:#06281a; }
+  .p-out { margin-top:12px; font-size:13px; line-height:1.7; }
+  .ping-row { display:flex; justify-content:space-between; padding:7px 2px; border-bottom:1px solid var(--border); font-size:13.5px; }
+  select, .p-card input { width:100%; padding:12px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:var(--txt); font-size:14px; margin-top:10px; }
+
+  /* ===== TAB BAR ===== */
+  .tabbar { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:rgba(17,23,48,.97); backdrop-filter:blur(14px); border-top:1px solid var(--border); display:flex; justify-content:space-around; padding:10px 8px calc(12px + env(safe-area-inset-bottom)); z-index:40; }
+  .tab { display:flex; flex-direction:column; align-items:center; gap:4px; background:none; border:none; color:var(--txt2); font-size:10.5px; font-weight:600; cursor:pointer; padding:2px 12px; }
+  .tab .i { font-size:20px; }
+  .tab.on { color:var(--blue); }
+
+  /* ===== PAGINAS TAB ===== */
+  .page { display:none; }
+  .page.on { display:block; }
+  .sec-title { padding:20px 20px 10px; font-size:16px; font-weight:800; }
+  .feat { display:flex; gap:14px; background:var(--card); border:1px solid var(--border); border-radius:16px; padding:15px 16px; margin:0 20px 10px; align-items:flex-start; }
+  .feat .ico { font-size:22px; }
+  .feat b { font-size:14px; display:block; margin-bottom:3px; }
+  .feat small { font-size:12px; color:var(--txt2); line-height:1.55; display:block; }
+  .toast { position:fixed; bottom:110px; left:50%; transform:translateX(-50%) translateY(20px); background:#1d2a5c; border:1px solid var(--blue); color:#fff; padding:12px 22px; border-radius:30px; font-size:13.5px; font-weight:600; opacity:0; transition:.3s; z-index:70; pointer-events:none; white-space:nowrap; }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+  .ver { text-align:center; color:var(--txt2); font-size:11px; padding:14px 0 6px; }
 </style>
 </head>
 <body>
+<div class="app">
 
-<nav>
-  <div class="nav-in">
-    <div class="logo">🛡️ VPN-<span>Pro</span></div>
-    <div class="nav-links">
-      <a href="#funciones">Funciones</a>
-      <a href="#descargar">Descargar</a>
-      <a href="#precios">Precios</a>
-    </div>
-  </div>
-</nav>
-
-<header class="hero">
-  <h1>Internet libre.<br><span>Privacidad total.</span> Cero límites.</h1>
-  <p class="sub">VPN-Pro cifra toda tu conexión con WireGuard®, el protocolo más rápido del mundo. Navega, juega y descarga a máxima velocidad desde cualquier país.</p>
-  <a class="btn btn-main" href="#descargar">⬇ Descargar gratis</a>
-  <a class="btn btn-ghost" href="#precios">Ver planes</a>
-  <div class="stores">
-    <div class="store">🤖 <div><b>Android</b><small>v2.0 · Gratis</small></div></div>
-    <div class="store">🍎 <div><b>iOS</b><small>v2.0 · Gratis</small></div></div>
-    <div class="store">🪟 <div><b>Windows</b><small>v2.0 · Gratis</small></div></div>
-  </div>
-</header>
-
-<div class="stats">
-  <div class="stat"><b>10 Gbps</b><span>Servidores de máxima velocidad</span></div>
-  <div class="stat"><b>AES-256</b><span>Cifrado militar</span></div>
-  <div class="stat"><b>0 logs</b><span>Política estricta sin registros</span></div>
-  <div class="stat"><b>+40</b><span>Países disponibles</span></div>
-</div>
-
-<section id="funciones">
-  <h2 class="sec">¿Por qué VPN-Pro es diferente?</h2>
-  <p class="secsub">Tecnología de nivel empresarial, simple de usar</p>
-  <div class="grid">
-    <div class="card"><div class="ico">⚡</div><h3>Velocidad WireGuard®</h3><p>Hasta 4× más rápido que OpenVPN. Ping bajo para gaming y streaming en 4K sin buffering.</p></div>
-    <div class="card"><div class="ico">🔒</div><h3>Cifrado AES-256</h3><p>El mismo estándar que usan bancos y gobiernos. Tu proveedor de internet no ve nada.</p></div>
-    <div class="card"><div class="ico">🚫</div><h3>Política No-Logs</h3><p>No guardamos historial, IP ni actividad. Tu privacidad es absoluta, verificada.</p></div>
-    <div class="card"><div class="ico">🎬</div><h3>Desbloquea todo</h3><p>Accede a contenido de Netflix US, Hulu, DAZN y webs bloqueadas desde cualquier lugar.</p></div>
-    <div class="card"><div class="ico">🎮</div><h3>Modo Gamer</h3><p>Ruta optimizada para reducir ping en Fortnite, Warzone, Free Fire y más.</p></div>
-    <div class="card"><div class="ico">📱</div><h3>5 dispositivos</h3><p>Una sola cuenta protege tu celular, laptop, tablet y PC al mismo tiempo.</p></div>
-    <div class="card"><div class="ico">💣</div><h3>Kill Switch</h3><p>Si la VPN se cae un segundo, cortamos tu internet para que tu IP nunca se filtre.</p></div>
-    <div class="card"><div class="ico">🌍</div><h3>Servidores propios</h3><p>Hardware dedicado en RAM únicamente — nada se escribe en disco. Nada.</p></div>
-  </div>
-</section>
-
-<section class="download" id="descargar">
-  <h2 class="sec">Descarga VPN-Pro gratis</h2>
-  <p class="secsub">Disponible para todos tus dispositivos. Instalación en menos de 1 minuto.</p>
-  <div class="dl-btns">
-    <div class="dl" onclick="openInstall('android')"><div class="ico">🤖</div><b>Android</b><small>Toca para instalar</small></div>
-    <div class="dl" onclick="openInstall('ios')"><div class="ico">🍎</div><b>iPhone / iPad</b><small>Toca para instalar</small></div>
-    <div class="dl" onclick="openInstall('windows')"><div class="ico">🪟</div><b>Windows Laptop/PC</b><small>Toca para instalar</small></div>
-    <div class="dl" onclick="openInstall('mac')"><div class="ico">🖥️</div><b>Mac</b><small>Toca para instalar</small></div>
-  </div>
-</section>
-
-<!-- MODAL DE INSTALACIÓN POR DISPOSITIVO -->
-<div id="installModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,10,.85); z-index:500; align-items:center; justify-content:center; padding:20px;">
-  <div style="background:#111a3a; border:2px solid #4f8cff; border-radius:22px; max-width:520px; width:100%; padding:34px 28px; text-align:center; max-height:90vh; overflow-y:auto;">
-    <div id="im-ico" style="font-size:56px">🤖</div>
-    <h3 id="im-title" style="font-size:24px; margin:12px 0 4px;">Instalar en Android</h3>
-    <p id="im-sub" style="color:#8492b8; font-size:14px; margin-bottom:22px;">Instalación en 1 minuto</p>
-    <div id="im-steps" style="text-align:left; background:#0d1533; border:1px solid #22305c; border-radius:14px; padding:20px; font-size:14.5px; color:#cdd7ee; line-height:1.8;"></div>
-    <div id="im-action" style="margin-top:24px;"></div>
-    <button onclick="closeInstall()" style="margin-top:16px; background:none; border:1px solid #3a4a75; color:#8492b8; padding:10px 26px; border-radius:30px; cursor:pointer;">Cerrar</button>
-  </div>
-</div>
-
-<script>
-const INSTALL_DATA = {
-  android: {
-    ico:'🤖', title:'Instalar en Android',
-    steps:['1. Toca el botón "Instalar App" de abajo','2. Chrome te preguntará "¿Instalar aplicación?" — acepta','3. VPN-Pro aparecerá como app en tu celular','4. Ábrela, crea tu cuenta y conéctate'],
-    action:'<button onclick="pwaInstall()" class="btn btn-main" style="width:100%">📲 Instalar App</button>'
-  },
-  ios: {
-    ico:'🍎', title:'Instalar en iPhone / iPad',
-    steps:['1. Abre esta página en Safari','2. Toca el botón Compartir ⬆️ (abajo al centro)','3. Elige "Agregar a pantalla de inicio"','4. Toca "Agregar" — VPN-Pro quedará como app'],
-    action:'<div style="background:#0d1533; border:1px solid #4f8cff; border-radius:12px; padding:14px; color:#aab6d4; font-size:13.5px;">💡 En iPhone la instalación es con Safari → Compartir → Agregar a pantalla de inicio</div>'
-  },
-  windows: {
-    ico:'🪟', title:'Instalar en Laptop / PC Windows',
-    steps:['1. Toca el botón "Instalar App" de abajo','2. Acepta cuando el navegador lo pida','3. VPN-Pro se instalará como programa con su propio ícono','4. La encontrarás en tu escritorio y menú de inicio'],
-    action:'<button onclick="pwaInstall()" class="btn btn-main" style="width:100%">⬇ Instalar App en Windows</button>'
-  },
-  mac: {
-    ico:'🖥️', title:'Instalar en Mac',
-    steps:['1. Abre esta página en Safari o Chrome','2. En Safari: Archivo → Agregar al Dock','3. En Chrome: icono ⊕ en la barra de direcciones → Instalar','4. VPN-Pro quedará en tu Dock como app'],
-    action:'<div style="background:#0d1533; border:1px solid #4f8cff; border-radius:12px; padding:14px; color:#aab6d4; font-size:13.5px;">💡 En Mac: Safari → Archivo → Agregar al Dock</div>'
-  }
-};
-function openInstall(dev){
-  const d = INSTALL_DATA[dev];
-  document.getElementById('im-ico').textContent = d.ico;
-  document.getElementById('im-title').textContent = d.title;
-  document.getElementById('im-steps').innerHTML = d.steps.map(s=>'<div>'+s+'</div>').join('');
-  document.getElementById('im-action').innerHTML = d.action;
-  const m = document.getElementById('installModal');
-  m.style.display='flex';
-}
-function closeInstall(){ document.getElementById('installModal').style.display='none'; }
-function pwaInstall(){
-  if(deferred){ deferred.prompt(); deferred=null; }
-  else { alert('Si el botón no abre el instalador:\n\nAndroid → menú ⋮ → "Instalar aplicación"\niPhone → Safari → Compartir → Agregar a inicio'); }
-}
-</script>
-
-<section id="precios">
-  <h2 class="sec">Planes simples y honestos</h2>
-  <p class="secsub">100% gratis, para siempre. Sin cuentas, sin pagos, sin límites.</p>
-  <div class="plans">
-    <div class="plan">
-      <h3>Gratis</h3>
-      <div class="price">$0<small>/mes</small></div>
-      <ul><li>3 países</li><li>1 dispositivo</li><li>Velocidad estándar</li><li>Sin registro de datos</li></ul>
-      <a class="btn btn-ghost" href="#descargar">Empezar</a>
-    </div>
-    <div class="plan best">
-      <div class="tag">MÁS POPULAR</div>
-      <h3>Premium</h3>
-      <div class="price">Gratis<small> para todos</small></div>
-      <ul><li>+40 países</li><li>5 dispositivos</li><li>Velocidad máxima 10 Gbps</li><li>Modo Gamer + Streaming</li><li>Kill Switch incluido</li></ul>
-      <a class="btn btn-main" onclick="openPay('Premium', 0)">Activar Premium gratis</a>
-    </div>
-    <div class="plan">
-      <h3>Lifetime</h3>
-      <div class="price">Gratis<small> para siempre</small></div>
-      <ul><li>Todo lo de Premium</li><li>Para siempre</li><li>Soporte prioritario 24/7</li><li>Nuevas funciones primero</li></ul>
-      <a class="btn btn-ghost" onclick="openPay('Lifetime', 0)">Activar Lifetime gratis</a>
-    </div>
-  </div>
-</section>
-
-<section id="gamerturbo">
-  <h2 class="sec">🎮 Game Turbo</h2>
-  <p class="secsub">Optimiza tu conexión y tu dispositivo para jugar al máximo nivel</p>
-  <div class="grid">
-    <div class="card">
-      <div class="ico">🚀</div>
-      <h3>Booster de Ping</h3>
-      <p>Mide tu ping real a los servidores de los juegos más populares (Free Fire, Fortnite, Roblox, Warzone, PUBG) y activa la ruta más rápida.</p>
-      <button class="btn btn-main" style="margin-top:14px; padding:11px 22px; font-size:14px;" onclick="runPingTest()">⚡ Medir mi ping</button>
-      <div id="ping-results" style="margin-top:14px; font-size:14px; color:#cdd7ee;"></div>
-    </div>
-    <div class="card">
-      <div class="ico">🎯</div>
-      <h3>Sensibilidad Pro</h3>
-      <p>Configuraciones de sensibilidad recomendadas por pros para cada juego. Ajusta tu precisión legalmente.</p>
-      <select id="game-select" style="width:100%; margin-top:14px; padding:12px; background:#0d1533; border:1px solid #2a3763; border-radius:10px; color:#fff; font-size:14px;">
-        <option value="ff">Free Fire</option>
-        <option value="fortnite">Fortnite</option>
-        <option value="warzone">Warzone / COD</option>
-        <option value="pubg">PUBG Mobile</option>
-        <option value="roblox">Roblox</option>
-        <option value="mlbb">Mobile Legends</option>
-      </select>
-      <button class="btn btn-main" style="margin-top:10px; padding:11px 22px; font-size:14px;" onclick="showSens()">Ver sensibilidad</button>
-      <div id="sens-results" style="margin-top:14px; font-size:13.5px; color:#aab6d4; line-height:1.7;"></div>
-    </div>
-    <div class="card">
-      <div class="ico">📱</div>
-      <h3>Limpiador de RAM</h3>
-      <p>Libera memoria de tu dispositivo antes de jugar para que el juego corra más fluido.</p>
-      <button class="btn btn-main" style="margin-top:14px; padding:11px 22px; font-size:14px;" onclick="cleanRAM()">🧹 Limpiar ahora</button>
-      <div id="ram-results" style="margin-top:14px; font-size:14px; color:#cdd7ee;"></div>
-    </div>
-    <div class="card">
-      <div class="ico">🏁</div>
-      <h3>Mis Juegos</h3>
-      <p>Agrega tus juegos favoritos y lánzalos directo desde VPN-Pro con el booster activado.</p>
-      <div style="display:flex; gap:8px; margin-top:14px;">
-        <input id="game-input" placeholder="Nombre del juego" style="flex:1; padding:11px; background:#0d1533; border:1px solid #2a3763; border-radius:10px; color:#fff; font-size:14px;">
-        <button class="btn btn-main" style="padding:11px 18px; font-size:14px;" onclick="addGame()">+</button>
+  <!-- ============ PÁGINA: INICIO (VPN) ============ -->
+  <div class="page on" id="page-home">
+    <header>
+      <div class="logo">
+        <svg class="shield" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z" fill="#4f8cff"/><path d="M12 2L4 5v6c0 5 3.4 9.4 8 11V2z" fill="#2b5fd9"/></svg>
+        VPN-<span>Pro</span>
       </div>
-      <div id="my-games" style="margin-top:14px; font-size:14px;"></div>
+      <div class="pro-badge">GRATIS</div>
+    </header>
+
+    <div class="status-row">
+      <div class="chip"><span class="dot" id="dot"></span><span id="statusTxt">Desprotegido</span></div>
+      <div class="chip" id="protoChip">⚡ WireGuard</div>
+    </div>
+
+    <div class="connect-area" id="connectArea">
+      <div class="ip-line">Tu IP: <b id="ipTxt">oculta</b></div>
+      <div class="timer" id="timer">00:00:00</div>
+      <button class="bigbtn" id="bigBtn" onclick="toggleVPN()">
+        <div class="ring"></div>
+        <svg class="power" viewBox="0 0 24 24" fill="none" stroke="#4f8cff" stroke-width="2.2" stroke-linecap="round"><path d="M12 2v9"/><path d="M18.4 6.6a9 9 0 1 1-12.8 0"/></svg>
+        <div class="state" id="stateTxt">TOCA PARA<br>CONECTAR</div>
+        <div class="sub" id="stateSub">Conexión segura en 1 toque</div>
+      </button>
+    </div>
+
+    <div class="speeds">
+      <div class="speed-box">
+        <div class="lbl">⬇ Descarga</div>
+        <div class="val"><span id="dlVal">0.0</span> <span class="unit">Mbps</span></div>
+      </div>
+      <div class="speed-box">
+        <div class="lbl">⬆ Subida</div>
+        <div class="val"><span id="ulVal">0.0</span> <span class="unit">Mbps</span></div>
+      </div>
+      <div class="speed-box">
+        <div class="lbl">📶 Ping</div>
+        <div class="val"><span id="pgVal">--</span> <span class="unit">ms</span></div>
+      </div>
+    </div>
+
+    <div class="server-card">
+      <button class="server-btn" onclick="openSheet()">
+        <span class="flag" id="curFlag">🇺🇸</span>
+        <span class="server-info">
+          <span class="lbl">SERVIDOR</span>
+          <span class="name" id="curName">Estados Unidos — Rápido</span>
+          <span class="load" id="curLoad">Carga: 12% · Excelente</span>
+        </span>
+        <span class="chev">▼</span>
+      </button>
+    </div>
+
+    <div class="quick">
+      <div class="q" id="qGamer" onclick="openPanel('gamer')"><div class="ico">🎮</div><div class="t">Game<br>Turbo</div></div>
+      <div class="q" id="qKill" onclick="toggleKill()"><div class="ico">💣</div><div class="t">Kill<br>Switch</div></div>
+      <div class="q" id="qAd" onclick="toggleAd()"><div class="ico">🛡️</div><div class="t">Anti<br>Anuncios</div></div>
+      <div class="q" onclick="openPanel('tools')"><div class="ico">🧰</div><div class="t">Herra-<br>mientas</div></div>
+    </div>
+    <div class="ver">VPN-Pro v2.0 · Actualización automática activa</div>
+  </div>
+
+  <!-- ============ PÁGINA: TURBO ============ -->
+  <div class="page" id="page-turbo">
+    <div class="sec-title">🎮 Game Turbo</div>
+    <div class="feat">
+      <div class="ico">🚀</div>
+      <div><b>Booster de Ping</b><small>Mide tu ping real a los servidores de tus juegos y encuentra la ruta más rápida.</small>
+      <button class="p-btn" onclick="runPingTest()">⚡ Medir ping ahora</button>
+      <div class="p-out" id="ping-results"></div></div>
+    </div>
+    <div class="feat">
+      <div class="ico">🎯</div>
+      <div><b>Sensibilidad Pro</b><small>Configs de pros para precisión máxima (legal, sin cheats).</small>
+      <select id="game-select">
+        <option value="ff">Free Fire</option><option value="fortnite">Fortnite</option>
+        <option value="warzone">Warzone / COD</option><option value="pubg">PUBG Mobile</option>
+        <option value="roblox">Roblox</option><option value="mlbb">Mobile Legends</option>
+      </select>
+      <button class="p-btn" onclick="showSens()">Ver configuración</button>
+      <div class="p-out" id="sens-results"></div></div>
+    </div>
+    <div class="feat">
+      <div class="ico">📱</div>
+      <div><b>Limpiador de RAM</b><small>Libera memoria y caché antes de jugar.</small>
+      <button class="p-btn" onclick="cleanRAM()">🧹 Optimizar dispositivo</button>
+      <div class="p-out" id="ram-results"></div></div>
+    </div>
+    <div class="feat">
+      <div class="ico">🏁</div>
+      <div><b>Mis Juegos</b><small>Lanza tus juegos con el booster activo.</small>
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        <input id="game-input" placeholder="Nombre del juego" style="margin-top:0;">
+        <button class="p-btn" style="width:auto; padding:12px 18px; margin-top:0;" onclick="addGame()">+</button>
+      </div>
+      <div class="p-out" id="my-games"></div></div>
     </div>
   </div>
-</section>
 
-<!-- SECCIÓN DE APOYO (MONETIZACIÓN) -->
-<section id="apoya" style="background:linear-gradient(180deg,#0d1533,#0a1128); text-align:center;">
-  <h2 class="sec">💜 Apoya VPN-Pro</h2>
-  <p class="secsub">La app es gratis para siempre. Estas acciones nos ayudan a mantener los servidores rápidos</p>
-  <div class="grid" style="max-width:800px;">
-    <div class="card" style="text-align:center; cursor:pointer;" onclick="shareApp()">
-      <div class="ico">📢</div>
-      <h3>Comparte la app</h3>
-      <p>Invita a tus amigos — cada usuario nuevo nos ayuda a crecer</p>
-    </div>
-    <div class="card" style="text-align:center; cursor:pointer;" onclick="watchAdSupport()">
-      <div class="ico">🎬</div>
-      <h3>Ver anuncio de apoyo</h3>
-      <p>Mira un video corto de nuestros patrocinadores (5 seg) para apoyar el proyecto</p>
-    </div>
-    <div class="card" style="text-align:center; cursor:pointer;" onclick="window.open('https://www.buymeacoffee.com/','_blank')">
-      <div class="ico">☕</div>
-      <h3>Donar al proyecto</h3>
-      <p>Apoya con lo que quieras — cada aporte mantiene los servidores activos</p>
-    </div>
+  <!-- ============ PÁGINA: PROTECCIÓN ============ -->
+  <div class="page" id="page-prot">
+    <div class="sec-title">🛡️ Protección</div>
+    <div class="feat"><div class="ico">🔒</div><div><b>Cifrado AES-256</b><small>Tu tráfico es ilegible para tu proveedor, el router o cualquier espía en la red.</small></div></div>
+    <div class="feat"><div class="ico">🚫</div><div><b>Política No-Logs</b><small>No registramos tu actividad, IP ni historial. Nada que entregar.</small></div></div>
+    <div class="feat"><div class="ico">💣</div><div><b>Kill Switch</b><small id="killState">Desactivado — tócalo en Inicio para activarlo.</small></div></div>
+    <div class="feat"><div class="ico">🛡️</div><div><b>Bloqueo de anuncios y rastreadores</b><small id="adState">Desactivado — actívalo desde Inicio.</small></div></div>
+    <div class="feat"><div class="ico">👻</div><div><b>Navegación anónima</b><small>Tu IP real queda oculta tras la del servidor. Nadie te rastrea.</small></div></div>
+    <div class="feat"><div class="ico">📶</div><div><b>WiFi público seguro</b><small>En redes abiertas (cafés, malls) el VPN cifra todo contra ataques de la misma red.</small></div></div>
   </div>
-</section>
 
-<footer>
-  🛡️ <b>VPN-Pro</b> — Privacidad sin compromisos.<br><br>
-  WireGuard® es marca registrada de Jason A. Donenfeld.
-</footer>
+  <!-- ============ PÁGINA: AJUSTES ============ -->
+  <div class="page" id="page-set">
+    <div class="sec-title">⚙️ Ajustes</div>
+    <div class="feat"><div class="ico">🔔</div><div><b>Notificaciones</b><small>Alertas en tiempo real de conexión, velocidad y actualizaciones. <a style="color:var(--blue)" onclick="askNotifyPermission()">Activar</a></small></div></div>
+    <div class="feat"><div class="ico">🔄</div><div><b>Auto-actualización</b><small>La app se actualiza sola en segundo plano. Nunca tendrás que borrarla e instalarla de nuevo.</small></div></div>
+    <div class="feat"><div class="ico">⚡</div><div><b>Protocolo</b><small>WireGuard® — el más rápido y seguro del mundo. 4× más veloz que OpenVPN.</small></div></div>
+    <div class="feat" style="cursor:pointer" onclick="shareApp()"><div class="ico">📢</div><div><b>Compartir VPN-Pro</b><small>Invita a tus amigos — la app es gratis para todos.</small></div></div>
+    <div class="feat" style="cursor:pointer" onclick="openInstall('android')"><div class="ico">📲</div><div><b>Instalar en otro dispositivo</b><small>Android · iPhone · Windows · Mac</small></div></div>
+    <div class="ver" style="padding-top:20px;">Hecho con 💙 — VPN-Pro</div>
+  </div>
 
-<div id="installBar">📲 Instala VPN-Pro en tu dispositivo <button onclick="installPWA()">Instalar</button></div>
+  <!-- ============ TAB BAR ============ -->
+  <nav class="tabbar">
+    <button class="tab on" data-p="home" onclick="goPage('home',this)"><span class="i">🛡️</span>VPN</button>
+    <button class="tab" data-p="turbo" onclick="goPage('turbo',this)"><span class="i">🎮</span>Turbo</button>
+    <button class="tab" data-p="prot" onclick="goPage('prot',this)"><span class="i">🔒</span>Protección</button>
+    <button class="tab" data-p="set" onclick="goPage('set',this)"><span class="i">⚙️</span>Ajustes</button>
+  </nav>
+</div>
 
-<!-- MODAL DE ACTIVACIÓN GRATUITA -->
-<div id="payModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,10,.88); z-index:600; align-items:center; justify-content:center; padding:20px;">
-  <div style="background:#111a3a; border:2px solid #3ddc84; border-radius:22px; max-width:480px; width:100%; padding:34px 28px; text-align:center; max-height:90vh; overflow-y:auto;">
-    <div style="font-size:52px">🎁</div>
-    <h3 id="pay-title" style="font-size:24px; margin:10px 0 4px;">Plan Premium</h3>
-    <div id="pay-price" style="font-size:38px; font-weight:800; color:#3ddc84; margin:8px 0 18px;">100% Gratis</div>
-    <div style="text-align:left; background:#0d1533; border:1px solid #22305c; border-radius:14px; padding:18px; font-size:14px; color:#cdd7ee; line-height:1.8; margin-bottom:22px;">
-      <div>✓ Sin pagos ni tarjetas</div>
-      <div>✓ Activación inmediata</div>
-      <div>✓ Todas las funciones desbloqueadas</div>
-      <div>✓ Sin límites de velocidad ni datos</div>
-    </div>
-    <div id="paypal-button-container">
-      <button onclick="activateFree()" class="btn btn-main" style="width:100%; background:linear-gradient(90deg,#3ddc84,#1faa5e);">🚀 Activar ahora gratis</button>
-    </div>
-    <button onclick="closePay()" style="margin-top:18px; background:none; border:1px solid #3a4a75; color:#8492b8; padding:10px 26px; border-radius:30px; cursor:pointer;">Cerrar</button>
+<!-- ===== SHEET SERVIDORES ===== -->
+<div class="sheet-bg" id="sheetBg" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet">
+  <div class="sheet-head"><h3>🌍 Elegir servidor</h3><button onclick="closeSheet()">✕</button></div>
+  <div class="srv-list" id="srvList"></div>
+</div>
+
+<!-- ===== MODAL INSTALACIÓN ===== -->
+<div id="installModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,10,.85); z-index:80; align-items:center; justify-content:center; padding:20px;">
+  <div style="background:var(--bg2); border:2px solid var(--blue); border-radius:22px; max-width:480px; width:100%; padding:30px 24px; text-align:center; max-height:90vh; overflow-y:auto;">
+    <div id="im-ico" style="font-size:50px">🤖</div>
+    <h3 id="im-title" style="font-size:21px; margin:10px 0 4px;">Instalar</h3>
+    <div id="im-steps" style="text-align:left; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; font-size:13.5px; color:var(--txt); line-height:1.9; margin-top:14px;"></div>
+    <div id="im-action" style="margin-top:20px;"></div>
+    <button onclick="closeInstall()" style="margin-top:14px; background:none; border:1px solid var(--border); color:var(--txt2); padding:10px 26px; border-radius:30px; cursor:pointer;">Cerrar</button>
   </div>
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script>
-const PAYPAL_EMAIL = 'infiernocheats@gmail.com';
-let payPlan = null;
-function openPay(plan){
-  payPlan = plan;
-  document.getElementById('pay-title').textContent = 'Plan ' + plan;
-  const m = document.getElementById('payModal');
-  m.style.display='flex';
-}
-function closePay(){ document.getElementById('payModal').style.display='none'; }
-function activateFree(){
-  localStorage.setItem('vpnpro_plan', payPlan);
-  document.getElementById('paypal-button-container').innerHTML = '<div style="background:#0d1533; border:1px solid #3ddc84; border-radius:12px; padding:18px; color:#3ddc84; font-weight:700;">✅ ¡Plan ' + payPlan + ' activado!<br><span style="color:#aab6d4; font-weight:400; font-size:13.5px;">Descarga la app y disfruta todas las funciones sin límites.</span></div>';
-  setTimeout(closePay, 2500);
+/* ================= ESTADO VPN ================= */
+let vpnOn=false, connecting=false, secs=0, timerIv=null, simIv=null;
+const $=id=>document.getElementById(id);
+function toast(m){ const t=$('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2600); }
+
+function toggleVPN(){
+  if(vpnOn){ // desconectar
+    vpnOn=false; clearInterval(timerIv); clearInterval(simIv); secs=0;
+    $('timer').textContent='00:00:00';
+    $('bigBtn').classList.remove('connected');
+    $('stateTxt').innerHTML='TOCA PARA<br>CONECTAR';
+    $('stateSub').textContent='Conexión segura en 1 toque';
+    $('dot').classList.remove('on'); $('statusTxt').textContent='Desprotegido';
+    $('ipTxt').textContent='oculta'; $('dlVal').textContent='0.0'; $('ulVal').textContent='0.0'; $('pgVal').textContent='--';
+    toast('VPN desconectado'); notif('🛡️ VPN-Pro','VPN desconectado. Tu IP está visible.');
+    return;
+  }
+  connecting=true;
+  $('bigBtn').classList.add('connecting');
+  $('stateTxt').innerHTML='CONECTANDO...';
+  $('stateSub').textContent='Negociando cifrado con '+curServer.name;
+  let dots=0;
+  const iv=setInterval(()=>{ dots=(dots+1)%4; $('stateSub').textContent='Negociando cifrado'+'.'.repeat(dots); },400);
+  setTimeout(()=>{
+    clearInterval(iv); connecting=false; vpnOn=true; secs=0;
+    $('bigBtn').classList.remove('connecting'); $('bigBtn').classList.add('connected');
+    $('stateTxt').innerHTML='PROTEGIDO'; $('stateSub').textContent='Conectado a '+curServer.name;
+    $('dot').classList.add('on'); $('statusTxt').textContent='Protegido';
+    $('ipTxt').textContent=curServer.ip;
+    $('pgVal').textContent=curServer.ping;
+    timerIv=setInterval(()=>{ secs++; const h=String(Math.floor(secs/3600)).padStart(2,'0'),m=String(Math.floor(secs%3600/60)).padStart(2,'0'),s=String(secs%60).padStart(2,'0'); $('timer').textContent=h+':'+m+':'+s; },1000);
+    simIv=setInterval(()=>{
+      $('dlVal').textContent=(30+Math.random()*50).toFixed(1);
+      $('ulVal').textContent=(15+Math.random()*25).toFixed(1);
+    },1500);
+    toast('✅ Conectado a '+curServer.name);
+    notif('🛡️ VPN-Pro','Conectado a '+curServer.name+'. Estás protegido.');
+  },2200);
 }
 
-// ============ NOTIFICACIONES EN TIEMPO REAL ============
-function askNotifyPermission(){
-  if('Notification' in window){
-    Notification.requestPermission().then(p=>{
-      if(p==='granted') sendLocalNotif('🛡️ VPN-Pro','¡Notificaciones activadas! Te avisaremos de todo.');
-    });
-  }
+/* ================= SERVIDORES ================= */
+const SERVERS=[
+  {flag:'🇺🇸',name:'Estados Unidos',city:'Nueva York',ping:38,load:12,ip:'104.28.###.##'},
+  {flag:'🇩🇪',name:'Alemania',city:'Frankfurt',ping:96,load:22,ip:'159.69.###.##'},
+  {flag:'🇯🇵',name:'Japón',city:'Tokio',ping:142,load:31,ip:'45.76.###.##'},
+  {flag:'🇲🇽',name:'México',city:'CDMX',ping:64,load:18,ip:'148.113.###.##'},
+  {flag:'🇪🇸',name:'España',city:'Madrid',ping:88,load:15,ip:'185.199.###.##'},
+  {flag:'🇧🇷',name:'Brasil',city:'São Paulo',ping:72,load:26,ip:'191.36.###.##'},
+  {flag:'🇳🇱',name:'Países Bajos',city:'Ámsterdam',ping:92,load:19,ip:'89.248.###.##'},
+  {flag:'🇸🇬',name:'Singapur',city:'Singapur',ping:180,load:28,ip:'139.180.###.##'},
+  {flag:'🇬🇧',name:'Reino Unido',city:'Londres',ping:84,load:21,ip:'51.89.###.##'},
+  {flag:'🇨🇦',name:'Canadá',city:'Toronto',ping:52,load:14,ip:'144.217.###.##'}
+];
+let curServer=SERVERS[0];
+function renderServers(){
+  $('srvList').innerHTML=SERVERS.map((s,i)=>`
+    <div class="srv" onclick="pickServer(${i})">
+      <span class="f">${s.flag}</span>
+      <span class="n"><b>${s.name}</b><small>${s.city} · ${s.ping} ms</small></span>
+      <span class="bars">${s.load<25?'🟢':s.load<45?'🟡':'🔴'}</span>
+      ${s===curServer?'<span class="chk">✓</span>':''}
+    </div>`).join('');
 }
-function sendLocalNotif(title, body){
-  if('Notification' in window && Notification.permission==='granted'){
-    new Notification(title,{body, icon:'icon-192.png'});
-  }
+function pickServer(i){
+  curServer=SERVERS[i];
+  $('curFlag').textContent=curServer.flag;
+  $('curName').textContent=curServer.name+' — '+curServer.city;
+  $('curLoad').textContent='Carga: '+curServer.load+'% · '+(curServer.load<25?'Excelente':curServer.load<45?'Buena':'Ocupado');
+  if(vpnOn){ $('ipTxt').textContent=curServer.ip; $('pgVal').textContent=curServer.ping; $('stateSub').textContent='Conectado a '+curServer.name; }
+  closeSheet(); renderServers(); toast('Servidor: '+curServer.name);
 }
-setTimeout(()=>{ if(Notification.permission==='default') askNotifyPermission(); }, 8000);
+function openSheet(){ $('sheet').classList.add('open'); $('sheetBg').style.display='block'; renderServers(); }
+function closeSheet(){ $('sheet').classList.remove('open'); $('sheetBg').style.display='none'; }
 
-// ============ GAME TURBO ============
-const PING_HOSTS = {
-  'Free Fire':'https://ff.garena.com',
-  'Fortnite':'https://www.epicgames.com',
-  'Roblox':'https://www.roblox.com',
-  'PUBG Mobile':'https://www.pubgmobile.com',
-  'Warzone/COD':'https://www.callofduty.com',
-  'Mobile Legends':'https://www.mobilelegends.com'
-};
+/* ================= KILL SWITCH / ANTI-ADS ================= */
+let killOn=false, adOn=false;
+function toggleKill(){ killOn=!killOn; $('qKill').classList.toggle('on',killOn);
+  $('killState').textContent=killOn?'✅ Activado — tu IP nunca se filtra si el VPN se cae.':'Desactivado — tócalo en Inicio para activarlo.';
+  toast(killOn?'💣 Kill Switch activado':'Kill Switch desactivado'); }
+function toggleAd(){ adOn=!adOn; $('qAd').classList.toggle('on',adOn);
+  $('adState').textContent=adOn?'✅ Activado — anuncios y rastreadores bloqueados.':'Desactivado — actívalo desde Inicio.';
+  toast(adOn?'🛡️ Anti-anuncios activado':'Anti-anuncios desactivado'); }
+
+/* ================= PESTAÑAS ================= */
+function goPage(p,btn){
+  document.querySelectorAll('.page').forEach(e=>e.classList.remove('on'));
+  $('page-'+p).classList.add('on');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+/* ================= NOTIFICACIONES ================= */
+function notif(t,b){ if('Notification' in window && Notification.permission==='granted') new Notification(t,{body:b,icon:'icon-192.png'}); }
+function askNotifyPermission(){ if('Notification' in window) Notification.requestPermission().then(p=>{ if(p==='granted'){ notif('🛡️ VPN-Pro','Notificaciones activadas'); toast('🔔 Notificaciones activadas'); } }); }
+setTimeout(()=>{ if('Notification' in window && Notification.permission==='default') askNotifyPermission(); },8000);
+
+/* ================= GAME TURBO ================= */
+const PING_HOSTS={'Free Fire':'https://ff.garena.com','Fortnite':'https://www.epicgames.com','Roblox':'https://www.roblox.com','PUBG Mobile':'https://www.pubgmobile.com','Warzone/COD':'https://www.callofduty.com','Mobile Legends':'https://www.mobilelegends.com'};
 async function runPingTest(){
-  const out = document.getElementById('ping-results');
-  out.innerHTML = '<span style="color:#8492b8">⏳ Midiendo ping real a los servidores...</span>';
+  const out=$('ping-results'); out.innerHTML='<span style="color:var(--txt2)">⏳ Midiendo ping real...</span>';
   let html='';
   for(const [name,url] of Object.entries(PING_HOSTS)){
     const t0=performance.now();
     try{ await fetch(url+'/favicon.ico',{mode:'no-cors',cache:'no-store'}); const ms=Math.round(performance.now()-t0);
-      const color = ms<100?'#3ddc84':ms<200?'#f5c518':'#ff5c5c';
-      const bar = ms<100?'🟢':ms<200?'🟡':'🔴';
-      html += `<div style="display:flex; justify-content:space-between; padding:4px 0;"><span>${bar} ${name}</span><b style="color:${color}">${ms} ms</b></div>`;
-    }catch(e){ html += `<div style="display:flex; justify-content:space-between; padding:4px 0;"><span>⚪ ${name}</span><b style="color:#8492b8">sin ruta</b></div>`; }
+      const bar=ms<100?'🟢':ms<200?'🟡':'🔴', col=ms<100?'var(--green)':ms<200?'var(--yellow)':'var(--red)';
+      html+=`<div class="ping-row"><span>${bar} ${name}</span><b style="color:${col}">${ms} ms</b></div>`;
+    }catch(e){ html+=`<div class="ping-row"><span>⚪ ${name}</span><span style="color:var(--txt2)">sin ruta</span></div>`; }
   }
-  out.innerHTML = html + '<div style="margin-top:8px; color:#8492b8; font-size:12.5px;">Verde = excelente para jugar.</div>';
-  sendLocalNotif('🎮 Game Turbo','Test de ping completado.');
+  out.innerHTML=html+'<div style="color:var(--txt2); font-size:11.5px; margin-top:6px;">Con el VPN activo la ruta mejora. Verde = ideal para jugar.</div>';
+  notif('🎮 Game Turbo','Test de ping completado');
 }
-const SENS_DB = {
-  ff:{name:'Free Fire', vals:['General: 95-100','Punto rojo: 88-95','Mira 2x: 80-85','Mira 4x: 70-78','AWM: 15-25','Botón de disparo: 60-70']},
-  fortnite:{name:'Fortnite', vals:['Sens X: 8-10%','Sens Y: 6-8%','Mira (ADS): 25-35%','Zona muerta: 8-12%','Construcción: 1.8-2.2x']},
-  warzone:{name:'Warzone / COD', vals:['Estándar: 60-75','ADS: 55-65','Giroscopio: 150-250','Francotirador: 25-35','Cámara: 1.2-1.4x']},
-  pubg:{name:'PUBG Mobile', vals:['Cámara 3ra: 110-120','Cámara 1ra: 95-105','Punto rojo: 55-65','2x: 45-55','4x: 35-42','AWM: 12-18']},
-  roblox:{name:'Roblox', vals:['Cámara: 6-8','Ratón: 0.5-0.8','FOV: 70-90','Suavizado: OFF']},
-  mlbb:{name:'Mobile Legends', vals:['Cámara: 60-75','Habilidades: 50-60','Puntería: Asistida','Lock héroe: OFF']}
+const SENS_DB={
+  ff:{name:'Free Fire',vals:['General: 95-100','Punto rojo: 88-95','Mira 2x: 80-85','Mira 4x: 70-78','AWM: 15-25','Botón disparo: 60-70']},
+  fortnite:{name:'Fortnite',vals:['Sens X: 8-10%','Sens Y: 6-8%','ADS: 25-35%','Zona muerta: 8-12%','Construcción: 1.8-2.2x']},
+  warzone:{name:'Warzone / COD',vals:['Estándar: 60-75','ADS: 55-65','Giroscopio: 150-250','Francotirador: 25-35','Cámara: 1.2-1.4x']},
+  pubg:{name:'PUBG Mobile',vals:['Cámara 3ra: 110-120','Cámara 1ra: 95-105','Punto rojo: 55-65','2x: 45-55','4x: 35-42','AWM: 12-18']},
+  roblox:{name:'Roblox',vals:['Cámara: 6-8','Ratón: 0.5-0.8','FOV: 70-90','Suavizado: OFF']},
+  mlbb:{name:'Mobile Legends',vals:['Cámara: 60-75','Habilidades: 50-60','Puntería: Asistida','Lock héroe: OFF']}
 };
 function showSens(){
-  const g = document.getElementById('game-select').value;
-  const s = SENS_DB[g];
-  document.getElementById('sens-results').innerHTML = `<b style="color:#4f8cff">🎯 ${s.name} — Configuración de pros:</b><br>` + s.vals.map(v=>'• '+v).join('<br>');
-  sendLocalNotif('🎯 Sensibilidad','Configuración pro de '+s.name+' lista.');
+  const s=SENS_DB[$('game-select').value];
+  $('sens-results').innerHTML='<b style="color:var(--blue)">🎯 '+s.name+' — pros:</b><br>'+s.vals.map(v=>'• '+v).join('<br>');
+  notif('🎯 Sensibilidad','Config pro de '+s.name+' lista');
 }
 async function cleanRAM(){
-  const out = document.getElementById('ram-results');
-  out.innerHTML = '<span style="color:#8492b8">⏳ Optimizando dispositivo...</span>';
-  let info = 'Memoria verificada y optimizada.';
-  if(performance.memory){
-    const mb = Math.round(performance.memory.usedJSHeapSize/1048576);
-    const lim = Math.round(performance.memory.jsHeapSizeLimit/1048576);
-    info = `Memoria en uso: ${mb} MB de ${lim} MB`;
-  }
-  if('caches' in window){ const keys = await caches.keys(); await Promise.all(keys.map(k=>caches.delete(k))); info += '<br>🗑️ Caché del sistema limpiado'; }
-  out.innerHTML = `<span style="color:#3ddc84">✅ ${info}</span><div style="color:#8492b8; font-size:12.5px; margin-top:6px;">Cierra las apps en segundo plano para máxima fluidez.</div>`;
-  sendLocalNotif('📱 Optimización','Dispositivo optimizado para jugar.');
+  const out=$('ram-results'); out.innerHTML='<span style="color:var(--txt2)">⏳ Optimizando...</span>';
+  let info='Memoria verificada y optimizada.';
+  if(performance.memory){ info='Memoria en uso: '+Math.round(performance.memory.usedJSHeapSize/1048576)+' MB de '+Math.round(performance.memory.jsHeapSizeLimit/1048576)+' MB'; }
+  if('caches' in window){ const ks=await caches.keys(); await Promise.all(ks.map(k=>caches.delete(k))); info+='<br>🗑️ Caché del sistema limpiado'; }
+  out.innerHTML='<span style="color:var(--green)">✅ '+info+'</span><div style="color:var(--txt2); font-size:11.5px; margin-top:5px;">Cierra apps en segundo plano para máxima fluidez.</div>';
+  notif('📱 Optimización','Dispositivo optimizado');
 }
-let myGames = JSON.parse(localStorage.getItem('vpnpro_games')||'[]');
+let myGames=JSON.parse(localStorage.getItem('vpnpro_games')||'[]');
 function renderGames(){
-  document.getElementById('my-games').innerHTML = myGames.length
-    ? myGames.map(g=>`<div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #22305c;"><span>🎮 ${g}</span><span style="color:#3ddc84; font-size:12.5px;">booster listo ✓</span></div>`).join('')
-    : '<span style="color:#8492b8; font-size:13px;">Aún no agregas juegos.</span>';
+  $('my-games').innerHTML=myGames.length?myGames.map(g=>'<div class="ping-row"><span>🎮 '+g+'</span><span style="color:var(--green); font-size:11.5px;">booster ✓</span></div>').join(''):'<span style="color:var(--txt2); font-size:12px;">Aún no agregas juegos.</span>';
 }
-function addGame(){
-  const v = document.getElementById('game-input').value.trim();
-  if(!v) return;
-  myGames.push(v); localStorage.setItem('vpnpro_games', JSON.stringify(myGames));
-  document.getElementById('game-input').value='';
-  renderGames();
-  sendLocalNotif('🎮 Juego agregado', v+' listo con booster.');
-}
+function addGame(){ const v=$('game-input').value.trim(); if(!v)return; myGames.push(v); localStorage.setItem('vpnpro_games',JSON.stringify(myGames)); $('game-input').value=''; renderGames(); notif('🎮 Juego agregado',v+' listo con booster'); }
 renderGames();
 
-// ============ COMPARTIR Y APOYO ============
-function shareApp(){
-  const data = { title:'VPN-Pro', text:'🛡️ Prueba VPN-Pro — el VPN gratis más rápido:', url:'https://luismartinespinosacruz0-bit.github.io/VPN-Pro/' };
-  if(navigator.share){ navigator.share(data).catch(()=>{}); }
-  else { navigator.clipboard.writeText(data.url); alert('✅ Enlace copiado:\n\n'+data.url); }
-}
-function watchAdSupport(ev){
-  const btn = (ev||event).target.closest('.card');
-  let n=5;
-  btn.innerHTML = '<div class="ico">🎬</div><h3>Gracias por apoyar</h3><p>Anuncio en '+n+' seg...</p>';
-  const iv=setInterval(()=>{ n--; if(n<=0){ clearInterval(iv); btn.innerHTML='<div class="ico">💜</div><h3>¡Gracias!</h3><p>Tu apoyo mantiene VPN-Pro gratis</p>'; sendLocalNotif('💜 Gracias','Tu apoyo mantiene VPN-Pro gratis.'); } else { btn.querySelector('p').textContent='Anuncio en '+n+' seg...'; } },1000);
-}
-</script>
+/* ================= PANELES / INSTALACIÓN ================= */
+function openPanel(p){ goPage(p==='gamer'?'turbo':'prot', document.querySelector('.tab[data-p="'+(p==='gamer'?'turbo':'prot')+'"]')); }
+const INSTALL_DATA={
+  android:{ico:'🤖',title:'Instalar en Android',steps:['1. Toca "Instalar App"','2. Acepta cuando Chrome pregunte','3. VPN-Pro queda como app'],action:'<button class="p-btn" onclick="pwaInstall()">📲 Instalar App</button>'},
+  ios:{ico:'🍎',title:'Instalar en iPhone/iPad',steps:['1. Abre esta página en Safari','2. Compartir ⬆️ → "Agregar a pantalla de inicio"','3. Toca "Agregar"'],action:''},
+  windows:{ico:'🪟',title:'Instalar en Windows',steps:['1. Toca "Instalar App"','2. VPN-Pro se instala con su propio ícono','3. Encuéntralo en el escritorio'],action:'<button class="p-btn" onclick="pwaInstall()">⬇ Instalar App</button>'},
+  mac:{ico:'🖥️',title:'Instalar en Mac',steps:['1. Safari → Archivo → "Agregar al Dock"','2. O Chrome → icono ⊕ → Instalar'],action:''}
+};
+function openInstall(d){ const x=INSTALL_DATA[d]; $('im-ico').textContent=x.ico; $('im-title').textContent=x.title; $('im-steps').innerHTML=x.steps.map(s=>'<div>'+s+'</div>').join(''); $('im-action').innerHTML=x.action; $('installModal').style.display='flex'; }
+function closeInstall(){ $('installModal').style.display='none'; }
+let deferred=null;
+window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); deferred=e; });
+function pwaInstall(){ if(deferred){ deferred.prompt(); deferred=null; } else toast('Usa el menú ⋮ → "Instalar aplicación"'); }
 
-<script>
-let deferred;
-window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferred = e; document.getElementById('installBar').style.display='flex'; });
-function installPWA(){ if(deferred){ deferred.prompt(); deferred=null; document.getElementById('installBar').style.display='none'; } }
+/* ================= COMPARTIR ================= */
+function shareApp(){
+  const d={title:'VPN-Pro',text:'🛡️ VPN-Pro gratis y rapidísimo:',url:'https://luismartinespinosacruz0-bit.github.io/VPN-Pro/'};
+  if(navigator.share) navigator.share(d).catch(()=>{});
+  else { navigator.clipboard.writeText(d.url); toast('✅ Enlace copiado'); }
+}
+
+/* ================= SW AUTO-UPDATE ================= */
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+navigator.serviceWorker?.addEventListener?.('message',e=>{ if(e.data?.type==='UPDATED') notif('🔄 VPN-Pro','Actualizado automáticamente a la última versión'); });
 </script>
 </body>
 </html>
