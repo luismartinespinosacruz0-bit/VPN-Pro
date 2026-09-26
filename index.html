@@ -380,14 +380,15 @@ function detectDevice(){
     // En la web normal: mostrar solo pantalla de instalación
     gate.style.display='flex'; app.style.display='none';
     const d=detectDevice();
-    $('deviceName').textContent=d.name;
+    const dn=document.getElementById('deviceName');
+    if(dn) dn.textContent=d.name;
     window._device=d.type;
   }
 })();
 function startInstallFromGate(){
   const d=window._device||detectDevice().type;
   // Intentar instalador nativo PWA primero (Android/Chrome/Edge)
-  if(deferred){ pwaInstall(); return; }
+  if(typeof deferred!=='undefined' && deferred){ pwaInstall(); return; }
   openInstall(d); // si no hay prompt nativo, mostrar instrucciones del dispositivo
 }
 function openGatePicker(){ $('gatePicker').style.display='flex'; }
